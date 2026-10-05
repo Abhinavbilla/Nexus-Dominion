@@ -190,12 +190,12 @@ export default class GameScene extends Phaser.Scene {
 
   _fitCamera() {
     const cam = this.cameras.main;
-    const { fitW, fitH } = this.plinthInfo;
+    const { fitW, fitH, dropY } = this.plinthInfo;
     const worldW = fitW;
     const worldH = fitH;
     const zoom = Math.min(cam.width / worldW, cam.height / worldH);
     cam.setZoom(zoom);
-    cam.centerOn(0, 6);
+    cam.centerOn(0, dropY / 2);
     if (this.cameraController) {
       this.cameraController.minZoom = zoom * 0.7;
       this.cameraController.maxZoom = zoom * 2.8;

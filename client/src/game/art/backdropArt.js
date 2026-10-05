@@ -83,7 +83,7 @@ export function renderPlinth(hexSize, boardRadius) {
   const R = (hexSize * Math.sqrt(3) * boardRadius + hexSize * 1.25) * scale; // top tier radius
   const STEPS = [1.25, 1.17, 1.09]; // ledge radii (outer -> inner) as multiples of R
   const levels = STEPS.length;
-  const H = hexSize * 0.26 * scale; // height of one step
+  const H = hexSize * 0.36 * scale; // height of one step
   const D = hexSize * 0.5 * scale; // base wall under the whole structure
   const pad = hexSize * 2.2 * scale;
   const Rmax = R * STEPS[0];
@@ -158,13 +158,18 @@ export function renderPlinth(hexSize, boardRadius) {
     wall(y, r, t === 0 ? H + D : H, LEDGE[t].wall[0], LEDGE[t].wall[1]);
     top(y, r, LEDGE[t].top[0], LEDGE[t].top[1]);
     bevel(cx, y, r, 1.5);
+    // heavy brass lip along the outer edge of every step
+    hex(cx, y, r * 0.997);
+    ctx.strokeStyle = linearGradient(ctx, cx - r, y - r, cx + r, y + r, [[0, "#ffe9a8"], [0.45, "#c78f2c"], [1, "#fff0b8"]]);
+    ctx.lineWidth = hexSize * 0.1 * scale;
+    ctx.stroke();
     // brass inlay running around the middle of the visible ledge band
     const inner = t + 1 < levels ? R * STEPS[t + 1] : R;
     const mid = (r + inner) / 2;
     if (t !== 1) {
       hex(cx, y, mid);
-      ctx.strokeStyle = t === 0 ? "rgba(233,180,76,0.6)" : "rgba(255,214,120,0.8)";
-      ctx.lineWidth = 2.4 * scale;
+      ctx.strokeStyle = t === 0 ? "rgba(233,180,76,0.9)" : "rgba(255,214,120,1)";
+      ctx.lineWidth = 4 * scale;
       ctx.stroke();
     }
   });
@@ -176,11 +181,11 @@ export function renderPlinth(hexSize, boardRadius) {
   // brass rim
   hex(cx, cy, R * 0.995);
   ctx.strokeStyle = linearGradient(ctx, cx - R, cy - R, cx + R, cy + R, [[0, "#ffd988"], [0.5, "#b07d22"], [1, "#ffd988"]]);
-  ctx.lineWidth = hexSize * 0.16 * scale;
+  ctx.lineWidth = hexSize * 0.26 * scale;
   ctx.stroke();
-  hex(cx, cy, R * 0.955);
-  ctx.strokeStyle = "rgba(233,180,76,0.35)";
-  ctx.lineWidth = 1.5 * scale;
+  hex(cx, cy, R * 0.94);
+  ctx.strokeStyle = "rgba(233,180,76,0.55)";
+  ctx.lineWidth = 2.6 * scale;
   ctx.stroke();
 
   // tick marks between the rims
@@ -228,7 +233,7 @@ export function renderPlinth(hexSize, boardRadius) {
     const r = R * lerp(STEPS[t], t + 1 < levels ? STEPS[t + 1] : 1, 0.5);
     for (let i = 0; i < 6; i++) {
       const a = (Math.PI / 180) * (60 * i);
-      stud(cx + r * Math.cos(a), y + r * Math.sin(a), hexSize * (t === 0 ? 0.27 : 0.2) * scale);
+      stud(cx + r * Math.cos(a), y + r * Math.sin(a), hexSize * (t === 0 ? 0.36 : 0.27) * scale);
     }
   });
 
@@ -241,7 +246,9 @@ export function renderPlinth(hexSize, boardRadius) {
     H: Ht,
     // extents used to frame the whole structure, steps included, in the camera
     fitW: (2 * Rmax) / scale + hexSize * 0.6,
-    fitH: (2 * Rmax * K + D + levels * H) / scale + hexSize * 0.6,
+    fitH: (2 * Rmax * K + D + (levels + 1) * H) / scale + hexSize * 0.6,
+    // the steps and base wall hang below the board centre, so the camera centres a bit lower
+    dropY: ((levels + 1) * H + D) / scale,
   };
 }
 
