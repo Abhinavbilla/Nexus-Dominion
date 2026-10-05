@@ -1,17 +1,17 @@
-.howto-root {
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.howto-wrap {
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  padding: 1.2rem;
 }
 
 .howto-panel {
-  width: min(640px, 92vw);
-  max-height: 85vh;
-  padding: 1.75rem;
+  width: min(980px, 100%);
+  max-height: calc(100vh - 2.4rem);
   display: flex;
   flex-direction: column;
+  padding: 1.4rem 1.6rem;
   gap: 1rem;
 }
 
@@ -19,31 +19,126 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid var(--color-panel-border);
-  padding-bottom: 0.75rem;
 }
 
 .howto-header h2 {
-  margin: 0;
-  color: var(--color-accent);
+  font-size: 1.7rem;
+  letter-spacing: 0.24em;
+  color: var(--gold-bright);
+}
+
+.howto-body {
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .howto-sections {
-  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 0.8rem;
+}
+
+.howto-card {
+  display: flex;
+  gap: 0.9rem;
+  padding: 0.9rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.howto-card-icon {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: rgba(233, 180, 76, 0.1);
+  border: 1px solid rgba(233, 180, 76, 0.3);
+}
+
+.howto-card h3 {
+  font-size: 1rem;
+  letter-spacing: 0.14em;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+}
+
+.howto-card p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--text-dim);
+}
+
+.howto-sub {
+  font-size: 0.82rem;
+  letter-spacing: 0.26em;
+  color: var(--gold);
+}
+
+.howto-terrain {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.7rem;
+}
+
+.howto-terrain-item {
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
-  padding-right: 0.5rem;
+  align-items: center;
+  text-align: center;
+  gap: 0.2rem;
+  padding: 0.6rem 0.5rem;
+  border-radius: var(--radius-md);
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--line);
 }
 
-.howto-section h3 {
-  margin: 0 0 0.3rem;
-  font-size: 0.95rem;
-  color: var(--color-text);
+.howto-terrain-item img {
+  width: 92px;
+  height: auto;
+  filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.5));
 }
 
-.howto-section p {
-  margin: 0;
-  font-size: 0.92rem;
-  line-height: 1.45;
+.howto-terrain-item b {
+  font-family: var(--font-display);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.howto-terrain-item span {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  line-height: 1.3;
+}
+
+.howto-keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.2rem;
+}
+
+.howto-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.9rem;
+  color: var(--text-dim);
+}
+
+.howto-key kbd {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  padding: 0.12rem 0.5rem;
+  border: 1px solid var(--line-strong);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--text);
 }

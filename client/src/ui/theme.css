@@ -1,31 +1,69 @@
+/* NEXUS: DOMINION design system.
+   Art direction: premium tabletop — warm brass accents on ink-black surfaces,
+   painted terrain, restrained glow. Player colors are rich, not neon. */
+
 :root {
-  --color-bg: #060a14;
-  --color-bg-deep: #02040a;
-  --color-panel: rgba(12, 20, 38, 0.72);
-  --color-panel-border: rgba(94, 234, 255, 0.18);
-  --color-text: #e8f3ff;
-  --color-text-dim: #8ea3c4;
-  --color-text-faint: #576a8c;
+  /* surfaces */
+  --bg-0: #07090f;
+  --bg-1: #0c1019;
+  --surface: #121827;
+  --surface-2: #1a2236;
+  --surface-3: #232d46;
+  --line: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.16);
 
-  --color-accent: #5eeaff;
-  --color-accent-soft: rgba(94, 234, 255, 0.35);
-  --color-danger: #ff5577;
-  --color-success: #4dffb0;
-  --color-warning: #ffcf5e;
+  /* text */
+  --text: #eef1f8;
+  --text-dim: #a3aec8;
+  --text-faint: #66728f;
 
-  --player-cyan: #4ff2ff;
-  --player-orange: #ff9b4f;
-  --player-violet: #b57bff;
-  --player-lime: #c6ff4f;
+  /* accents */
+  --gold: #e9b44c;
+  --gold-bright: #ffd47a;
+  --gold-deep: #a8761f;
+  --teal: #4cc9b0;
+  --info: #5aa9ff;
+  --danger: #ee5a5a;
+  --success: #62d68a;
 
-  --font-display: "Orbitron", "Segoe UI", sans-serif;
-  --font-body: "Rajdhani", "Segoe UI", sans-serif;
+  /* resources */
+  --res-wood: #7fc66a;
+  --res-metal: #9fb4cf;
+  --res-energy: #ffd84d;
+  --res-dominion: #e9b44c;
 
+  /* players (keys keep the server's color names) */
+  --player-cyan: #4c8dff;
+  --player-orange: #ff6b3d;
+  --player-violet: #b070ff;
+  --player-lime: #5fd068;
+
+  /* legacy aliases used by older component CSS */
+  --color-bg: var(--bg-0);
+  --color-bg-deep: var(--bg-0);
+  --color-panel: var(--surface);
+  --color-panel-border: var(--line);
+  --color-text: var(--text);
+  --color-text-dim: var(--text-dim);
+  --color-text-faint: var(--text-faint);
+  --color-accent: var(--gold);
+  --color-accent-soft: rgba(233, 180, 76, 0.35);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+  --color-warning: var(--gold);
+
+  --font-title: "Cinzel", "Georgia", serif;
+  --font-display: "Barlow Condensed", "Segoe UI", sans-serif;
+  --font-body: "Barlow", "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --radius-sm: 6px;
   --radius-md: 10px;
-  --radius-lg: 16px;
+  --radius-lg: 14px;
 
-  --glow-sm: 0 0 8px currentColor;
-  --glow-md: 0 0 18px currentColor, 0 0 4px currentColor;
+  --shadow-panel: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 12px 32px rgba(0, 0, 0, 0.5);
+  --glow-sm: 0 0 10px rgba(233, 180, 76, 0.35);
+  --glow-md: 0 0 22px rgba(233, 180, 76, 0.45);
 }
 
 * {
@@ -40,10 +78,23 @@ body,
 }
 
 body {
-  background: radial-gradient(ellipse at 50% -10%, #0c1830 0%, var(--color-bg) 45%, var(--color-bg-deep) 100%);
-  color: var(--color-text);
+  background: var(--bg-0);
+  color: var(--text);
   font-family: var(--font-body);
+  font-size: 15px;
   overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+}
+
+.font-title {
+  font-family: var(--font-title);
+  letter-spacing: 0.08em;
 }
 
 h1,
@@ -51,91 +102,145 @@ h2,
 h3,
 .font-display {
   font-family: var(--font-display);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 button {
-  font-family: var(--font-body);
+  font-family: var(--font-display);
   cursor: pointer;
 }
 
-/* ---------- Shared primitives ---------- */
+/* ---------- Surfaces ---------- */
 
-.glass-panel {
-  background: var(--color-panel);
-  border: 1px solid var(--color-panel-border);
+.glass-panel,
+.panel {
+  position: relative;
+  background: linear-gradient(180deg, rgba(26, 34, 54, 0.94), rgba(14, 19, 32, 0.96));
+  border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.02) inset, 0 8px 32px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-panel);
 }
+
+/* brass hairline + corner studs: the "crafted" detail that separates this from flat UI */
+.glass-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(135deg, rgba(233, 180, 76, 0.35), transparent 22%, transparent 78%, rgba(233, 180, 76, 0.18));
+  -webkit-mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  padding: 1px;
+}
+
+.panel-title {
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  letter-spacing: 0.22em;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.panel-title::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(233, 180, 76, 0.4), transparent);
+}
+
+/* ---------- Buttons ---------- */
 
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5em;
-  padding: 0.65em 1.4em;
+  gap: 0.55em;
+  padding: 0.62em 1.35em;
   border-radius: var(--radius-md);
-  border: 1px solid var(--color-accent-soft);
-  background: linear-gradient(180deg, rgba(94, 234, 255, 0.14), rgba(94, 234, 255, 0.04));
-  color: var(--color-accent);
+  border: 1px solid var(--line-strong);
+  background: linear-gradient(180deg, var(--surface-3), var(--surface-2));
+  color: var(--text);
   font-weight: 600;
   font-size: 0.95rem;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  transition: all 0.15s ease;
+  letter-spacing: 0.1em;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.07) inset, 0 3px 8px rgba(0, 0, 0, 0.35);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease, filter 0.12s ease;
 }
 
 .btn:hover:not(:disabled) {
-  background: linear-gradient(180deg, rgba(94, 234, 255, 0.28), rgba(94, 234, 255, 0.08));
-  box-shadow: var(--glow-sm);
+  border-color: rgba(233, 180, 76, 0.6);
   transform: translateY(-1px);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset, 0 6px 14px rgba(0, 0, 0, 0.45), 0 0 14px rgba(233, 180, 76, 0.18);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
 }
 
 .btn:disabled {
-  opacity: 0.35;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
-.btn.btn-danger {
-  border-color: rgba(255, 85, 119, 0.4);
-  color: var(--color-danger);
-  background: linear-gradient(180deg, rgba(255, 85, 119, 0.14), rgba(255, 85, 119, 0.04));
+.btn.btn-primary {
+  border-color: var(--gold-deep);
+  color: #231703;
+  background: linear-gradient(180deg, var(--gold-bright), var(--gold) 55%, #c98f2d);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset, 0 4px 14px rgba(233, 180, 76, 0.28), 0 3px 8px rgba(0, 0, 0, 0.4);
 }
 
-.btn.btn-primary {
-  border-color: rgba(94, 234, 255, 0.6);
-  color: #03131a;
-  background: linear-gradient(180deg, #7ff2ff, #35c7e6);
-  box-shadow: 0 0 20px rgba(94, 234, 255, 0.35);
+.btn.btn-primary:hover:not(:disabled) {
+  filter: brightness(1.08);
 }
+
+.btn.btn-danger {
+  border-color: rgba(238, 90, 90, 0.45);
+  color: #ffb3b3;
+  background: linear-gradient(180deg, rgba(238, 90, 90, 0.22), rgba(238, 90, 90, 0.08));
+}
+
+.btn.btn-danger:hover:not(:disabled) {
+  border-color: var(--danger);
+  box-shadow: 0 0 16px rgba(238, 90, 90, 0.3);
+}
+
+.btn.btn-ghost {
+  background: transparent;
+  box-shadow: none;
+}
+
+/* ---------- Text ---------- */
 
 .text-dim {
-  color: var(--color-text-dim);
+  color: var(--text-dim);
 }
 
 .text-faint {
-  color: var(--color-text-faint);
+  color: var(--text-faint);
 }
 
 /* ---------- Animations ---------- */
 
-@keyframes pulse-glow {
-  0%,
-  100% {
-    opacity: 0.6;
-    filter: drop-shadow(0 0 2px currentColor);
-  }
-  50% {
-    opacity: 1;
-    filter: drop-shadow(0 0 10px currentColor);
-  }
-}
-
 @keyframes fade-in-up {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
@@ -143,34 +248,34 @@ button {
   }
 }
 
-@keyframes scan-line {
-  0% {
-    background-position: 0 0;
-  }
+@keyframes pulse-glow {
+  0%,
   100% {
-    background-position: 0 40px;
+    opacity: 0.65;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
   }
 }
 
 .fade-in-up {
-  animation: fade-in-up 0.4s ease both;
+  animation: fade-in-up 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .pulse-glow {
   animation: pulse-glow 2.2s ease-in-out infinite;
 }
 
-/* subtle tactical scanline backdrop used on menu/lobby screens */
-.scanline-backdrop {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image: repeating-linear-gradient(0deg, rgba(94, 234, 255, 0.025) 0px, transparent 1px, transparent 3px);
-  animation: scan-line 6s linear infinite;
-  mix-blend-mode: screen;
-}
-
-/* ---------- Player color utility classes ---------- */
+/* ---------- Player colors ---------- */
 
 .player-cyan {
   color: var(--player-cyan);
@@ -185,14 +290,60 @@ button {
   color: var(--player-lime);
 }
 
+.bg-player-cyan {
+  background: var(--player-cyan);
+}
+.bg-player-orange {
+  background: var(--player-orange);
+}
+.bg-player-violet {
+  background: var(--player-violet);
+}
+.bg-player-lime {
+  background: var(--player-lime);
+}
+
+/* ---------- Scrollbars ---------- */
+
 .scrollbar-thin {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-accent-soft) transparent;
+  scrollbar-color: rgba(233, 180, 76, 0.4) transparent;
 }
 .scrollbar-thin::-webkit-scrollbar {
   width: 6px;
 }
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: var(--color-accent-soft);
+  background: rgba(233, 180, 76, 0.4);
   border-radius: 4px;
+}
+
+/* ---------- Inputs ---------- */
+
+.menu-input,
+.chat-input {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  padding: 0.7em 0.9em;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.menu-input:focus,
+.chat-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(233, 180, 76, 0.15);
+}
+
+.menu-input::placeholder,
+.chat-input::placeholder {
+  color: var(--text-faint);
+}
+
+/* legacy: removed decorative scanlines */
+.scanline-backdrop {
+  display: none;
 }

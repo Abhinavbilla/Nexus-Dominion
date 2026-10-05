@@ -1,0 +1,78 @@
+.cost-chips {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.cost-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.22rem;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.cost-chip-lacking {
+  color: var(--danger);
+}
+
+.cost-chip-lacking .icon {
+  opacity: 0.6;
+}
+
+.res-chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.28rem 0.7rem 0.28rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--line);
+}
+
+.res-chip-value {
+  font-size: 1.02rem;
+  font-weight: 700;
+  min-width: 1.2ch;
+  text-align: right;
+}
+
+.res-chip-delta {
+  position: absolute;
+  right: 0.3rem;
+  top: -0.9rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  animation: delta-float 1.4s ease-out forwards;
+  pointer-events: none;
+  text-shadow: 0 1px 4px #000;
+}
+
+.res-chip-delta.up {
+  color: var(--success);
+}
+
+.res-chip-delta.down {
+  color: var(--danger);
+}
+
+@keyframes delta-float {
+  from {
+    opacity: 1;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+.player-emblem {
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
+}
+
+.player-emblem-active {
+  filter: drop-shadow(0 0 8px var(--c)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
+}

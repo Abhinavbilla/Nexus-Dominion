@@ -26,6 +26,7 @@ export const useGameStore = create((set, get) => ({
 
   // --- local UI only ---
   selectedHex: null,
+  hoveredHex: null,
   actionMode: null, // "claim" | "build" | "attack" | "fortify" | null
   pendingBuildType: null,
   muted: false,
@@ -52,6 +53,7 @@ export const useGameStore = create((set, get) => ({
 
   pushAIExplanation: (entry) => set({ aiExplanations: [...get().aiExplanations, entry].slice(-30) }),
 
+  setHoveredHex: (hex) => set({ hoveredHex: hex }),
   setSelectedHex: (hex) => set({ selectedHex: hex }),
   setActionMode: (mode) => set({ actionMode: mode, pendingBuildType: null }),
   setPendingBuildType: (buildingType) => set({ pendingBuildType: buildingType }),

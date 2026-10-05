@@ -4,7 +4,17 @@ import { calculateAttackStrength, calculateDefenseStrength, resolveAttack } from
 import { boardArrayToMap } from "../boardMap.js";
 import { BASE_CONFIG } from "../config.js";
 import { sendAction } from "../networking/SocketClient.js";
+import Icon from "./Icon.jsx";
+import { CostChips } from "./bits.jsx";
 import "./AttackPreview.css";
+
+function Pill({ label, value }) {
+  return (
+    <span className="atk-pill">
+      {label} <b className="mono">+{value}</b>
+    </span>
+  );
+}
 
 export default function AttackPreview() {
   const actionMode = useGameStore((s) => s.actionMode);
@@ -26,17 +36,12 @@ export default function AttackPreview() {
   if (!targetHex || !targetHex.ownerId || targetHex.ownerId === me.id) return null;
 
   const hasActiveSupplyChain = gameState.activeSupplyChains.some((c) => c.playerId === me.id && c.active);
-  const attack = calculateAttackStrength({
-    board,
-    targetHex,
-    attackerId: me.id,
-    hasActiveSupplyChain,
-    config: BASE_CONFIG,
-    boardRadius: BASE_CONFIG.BOARD_RADIUS,
-  });
+  const attack = calculateAttackStrength({ board, targetHex, attackerId: me.id, hasActiveSupplyChain, config: BASE_CONFIG, boardRadius: BASE_CONFIG.BOARD_RADIUS });
   const defense = calculateDefenseStrength({ targetHex, config: BASE_CONFIG });
   const outcome = resolveAttack(attack.total, defense.total);
   const defender = gameState.players.find((p) => p.id === targetHex.ownerId);
+  const success = outcome === "SUCCESS";
+  const max = Math.max(attack.total, defense.total, 1);
 
   function confirm() {
     sendAction("attack", selectedHex);
@@ -45,44 +50,58 @@ export default function AttackPreview() {
 
   return (
     <div ref={rootRef} className="attack-preview glass-panel fade-in-up">
-      <h3 className="font-display attack-preview-title">ATTACK PREVIEW</h3>
-      <p className="text-dim">
-        Target: <span className={`player-${defender?.color}`}>{defender?.name}</span>'s hex ({selectedHex.q}, {selectedHex.r})
+      <h3 className="panel-title" style={{ color: "#ff8a8a" }}>
+        ATTACK
+      </h3>
+      <p className="atk-target text-dim">
+        <span className={`player-${defender?.color}`}>{defender?.name}</span> · hex ({selectedHex.q}, {selectedHex.r})
       </p>
 
-      <div className="attack-preview-stats">
-        <div className="attack-stat">
-          <span className="text-faint">ATTACK STRENGTH</span>
-          <span className="attack-stat-value">{attack.total}</span>
-          <span className="text-faint">
-            base {attack.breakdown.base}
-            {attack.breakdown.support > 0 && ` +${attack.breakdown.support} support`}
-            {attack.breakdown.supplyChain > 0 && ` +${attack.breakdown.supplyChain} chain`}
-          </span>
+      <div className="atk-versus">
+        <div className="atk-side atk-side-you">
+          <span className="atk-side-label">YOU</span>
+          <span className="atk-num mono">{attack.total}</span>
+          <div className="atk-bar">
+            <div className="atk-bar-fill atk-bar-you" style={{ height: `${(attack.total / max) * 100}%` }} />
+          </div>
+          <div className="atk-pills">
+            <Pill label="Base" value={attack.breakdown.base} />
+            {attack.breakdown.support > 0 && <Pill label="Support" value={attack.breakdown.support} />}
+            {attack.breakdown.supplyChain > 0 && <Pill label="Chain" value={attack.breakdown.supplyChain} />}
+          </div>
         </div>
-        <div className="attack-stat">
-          <span className="text-faint">DEFENSE STRENGTH</span>
-          <span className="attack-stat-value">{defense.total}</span>
-          <span className="text-faint">
-            base {defense.breakdown.base}
-            {defense.breakdown.fortress > 0 && ` +${defense.breakdown.fortress} fortress`}
-            {defense.breakdown.city > 0 && ` +${defense.breakdown.city} city`}
-            {defense.breakdown.fortification > 0 && ` +${defense.breakdown.fortification} fortify`}
-          </span>
+
+        <Icon name="attack" size={26} color="var(--text-faint)" className="atk-vs" />
+
+        <div className="atk-side atk-side-them">
+          <span className="atk-side-label">DEFENSE</span>
+          <span className="atk-num mono">{defense.total}</span>
+          <div className="atk-bar">
+            <div className="atk-bar-fill atk-bar-them" style={{ height: `${(defense.total / max) * 100}%` }} />
+          </div>
+          <div className="atk-pills">
+            <Pill label="Base" value={defense.breakdown.base} />
+            {defense.breakdown.fortress > 0 && <Pill label="Fortress" value={defense.breakdown.fortress} />}
+            {defense.breakdown.city > 0 && <Pill label="City" value={defense.breakdown.city} />}
+            {defense.breakdown.fortification > 0 && <Pill label="Fortified" value={defense.breakdown.fortification} />}
+          </div>
         </div>
       </div>
 
-      <div className={`attack-outcome ${outcome === "SUCCESS" ? "attack-outcome-success" : "attack-outcome-fail"}`}>
-        {outcome}
+      <div className={`atk-verdict ${success ? "atk-verdict-win" : "atk-verdict-lose"}`}>
+        <Icon name={success ? "crown" : "fortify"} size={18} />
+        {success ? "SUCCESS — you capture the hex" : "FAILED — the defense holds"}
       </div>
 
-      <p className="text-faint">Cost: 1 AP · 3 Metal · 2 Energy</p>
+      <div className="atk-cost">
+        <span className="text-faint">Cost</span> <CostChips cost={BASE_CONFIG.ATTACK_COSTS} have={me?.resources} /> <span className="text-faint">· 1 action</span>
+      </div>
 
-      <div className="menu-actions">
+      <div className="atk-actions">
         <button className="btn btn-danger" onClick={confirm}>
           Confirm Attack
         </button>
-        <button className="btn" onClick={clearSelection}>
+        <button className="btn btn-ghost" onClick={clearSelection}>
           Cancel
         </button>
       </div>

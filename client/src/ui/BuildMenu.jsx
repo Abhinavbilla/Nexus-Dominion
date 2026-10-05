@@ -1,26 +1,20 @@
+import { useMemo } from "react";
 import { useGameStore, getMyPlayer } from "../state/gameStore.js";
 import { BASE_CONFIG } from "../config.js";
+import { buildingDataUrl } from "../game/art/buildingArt.js";
+import { PLAYER_COLOR_CSS } from "../game/playerColors.js";
+import { CostChips } from "./bits.jsx";
 import "./BuildMenu.css";
 
 const BUILDINGS = [
-  { type: "factory", label: "Factory", effect: "+1 resource production (local)" },
-  { type: "fortress", label: "Fortress", effect: "+3 Defense Strength" },
-  { type: "city", label: "City", effect: "+3 Dominion · Supply Chain endpoint" },
+  { type: "factory", label: "Factory", effect: "Doubles a resource hex's output and powers a Supply Chain." },
+  { type: "fortress", label: "Fortress", effect: "+3 Defense Strength on this hex." },
+  { type: "city", label: "City", effect: "+3 Dominion now. Supply Chain endpoint." },
 ];
-
-function formatCost(cost) {
-  const parts = [];
-  if (cost.wood) parts.push(`${cost.wood} Wood`);
-  if (cost.metal) parts.push(`${cost.metal} Metal`);
-  if (cost.energy) parts.push(`${cost.energy} Energy`);
-  return parts.join(" · ");
-}
 
 function canAfford(me, cost) {
   if (!me) return false;
-  return (!cost.wood || me.resources.wood >= cost.wood) &&
-    (!cost.metal || me.resources.metal >= cost.metal) &&
-    (!cost.energy || me.resources.energy >= cost.energy);
+  return ["wood", "metal", "energy"].every((k) => !cost[k] || me.resources[k] >= cost[k]);
 }
 
 export default function BuildMenu() {
@@ -28,33 +22,32 @@ export default function BuildMenu() {
   const pendingBuildType = useGameStore((s) => s.pendingBuildType);
   const setPendingBuildType = useGameStore((s) => s.setPendingBuildType);
   const me = getMyPlayer();
+  const color = PLAYER_COLOR_CSS[me?.color] || "#4c8dff";
+  const art = useMemo(() => Object.fromEntries(BUILDINGS.map((b) => [b.type, buildingDataUrl(b.type, color, 22)])), [color]);
 
   if (actionMode !== "build") return null;
 
   return (
     <div className="build-menu glass-panel fade-in-up">
-      <h3 className="font-display build-menu-title">BUILD</h3>
-      <p className="text-faint build-menu-hint">Choose a structure, then click a target hex.</p>
+      <h3 className="panel-title">BUILD</h3>
+      <p className="text-faint build-menu-hint">Pick a structure, then click a glowing hex.</p>
       {BUILDINGS.map((b) => {
         const cost = BASE_CONFIG.BUILD_COSTS[b.type];
         const affordable = canAfford(me, cost);
+        const active = pendingBuildType === b.type;
         return (
-          <button
-            key={b.type}
-            className={`build-option ${pendingBuildType === b.type ? "build-option-active" : ""}`}
-            disabled={!affordable}
-            onClick={() => setPendingBuildType(b.type)}
-          >
-            <div className="build-option-row">
-              <span className="build-option-label">{b.label}</span>
-              <span className="text-faint">{formatCost(cost)}</span>
-            </div>
-            <span className="text-dim build-option-effect">{b.effect}</span>
-            {!affordable && <span className="build-option-error">Insufficient resources</span>}
+          <button key={b.type} className={`build-card ${active ? "build-card-active" : ""}`} disabled={!affordable} onClick={() => setPendingBuildType(b.type)}>
+            <span className="build-card-art">
+              <img src={art[b.type]} alt="" draggable="false" />
+            </span>
+            <span className="build-card-body">
+              <span className="build-card-name">{b.label}</span>
+              <span className="build-card-effect">{b.effect}</span>
+              <CostChips cost={cost} have={me?.resources} />
+            </span>
           </button>
         );
       })}
-      {pendingBuildType && <p className="text-dim build-menu-prompt">Click a valid owned hex to build {pendingBuildType}.</p>}
     </div>
   );
 }

@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useGameStore } from "../state/gameStore.js";
 import { createRoom, joinRoom } from "../networking/SocketClient.js";
+import Backdrop from "./Backdrop.jsx";
+import Logo from "./Logo.jsx";
+import HeroTiles from "./HeroTiles.jsx";
+import Icon from "./Icon.jsx";
 import HowToPlay from "./HowToPlay.jsx";
 import "./MainMenu.css";
 
@@ -26,88 +30,79 @@ export default function MainMenu() {
   }
 
   return (
-    <div className="menu-root">
-      <div className="scanline-backdrop" />
-      <div className="menu-hex-glow" />
+    <Backdrop className="menu-root">
+      <div className="menu-layout">
+        <div className="menu-left fade-in-up">
+          <Logo />
+          <p className="menu-tagline">Seize the board. Link your supply lines. Rule the Nexus.</p>
 
-      <div className="menu-content fade-in-up">
-        <div className="menu-title-block">
-          <h1 className="menu-title font-display">
-            NEXUS<span className="menu-title-colon">:</span>
-            <br />
-            <span className="menu-title-sub">DOMINION</span>
-          </h1>
-          <p className="menu-tagline text-dim">TERRITORIAL COMMAND · TACTICAL SUPREMACY</p>
+          {mode === "root" && (
+            <div className="menu-panel glass-panel">
+              <label className="menu-label" htmlFor="cmd-name">
+                Commander name
+              </label>
+              <input id="cmd-name" className="menu-input" value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter your name" maxLength={16} />
+              <div className="menu-actions">
+                <button className="btn btn-primary menu-cta" onClick={() => setMode("create")}>
+                  <Icon name="plus" size={16} /> Create Room
+                </button>
+                <button className="btn" onClick={() => setMode("join")}>
+                  <Icon name="swap" size={16} /> Join Room
+                </button>
+                <button className="btn btn-ghost" onClick={() => setMode("howto")}>
+                  <Icon name="info" size={16} /> How To Play
+                </button>
+              </div>
+            </div>
+          )}
+
+          {mode === "create" && (
+            <form className="menu-panel glass-panel" onSubmit={handleCreate}>
+              <p className="text-dim menu-note">A private room with a shareable code. You can add AI opponents in the lobby.</p>
+              <div className="menu-actions">
+                <button type="submit" className="btn btn-primary menu-cta">
+                  Create & Enter Lobby
+                </button>
+                <button type="button" className="btn btn-ghost" onClick={() => setMode("root")}>
+                  Back
+                </button>
+              </div>
+            </form>
+          )}
+
+          {mode === "join" && (
+            <form className="menu-panel glass-panel" onSubmit={handleJoin}>
+              <label className="menu-label" htmlFor="room-code">
+                Room code
+              </label>
+              <input id="room-code" className="menu-input menu-input-code" value={roomCode} onChange={(e) => setRoomCode(e.target.value.toUpperCase())} placeholder="X7K92" maxLength={5} />
+              <div className="menu-actions">
+                <button type="submit" className="btn btn-primary menu-cta" disabled={roomCode.length < 5}>
+                  Join Room
+                </button>
+                <button type="button" className="btn btn-ghost" onClick={() => setMode("root")}>
+                  Back
+                </button>
+              </div>
+            </form>
+          )}
+
+          {error && (
+            <div className="menu-error">
+              <Icon name="info" size={16} />
+              <span>{error}</span>
+              <button className="menu-error-dismiss" onClick={clearError} aria-label="Dismiss">
+                <Icon name="close" size={14} />
+              </button>
+            </div>
+          )}
         </div>
 
-        {mode === "root" && (
-          <div className="menu-panel glass-panel fade-in-up">
-            <label className="menu-label">Commander Name</label>
-            <input
-              className="menu-input"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter your name"
-              maxLength={16}
-            />
-            <div className="menu-actions">
-              <button className="btn btn-primary" onClick={() => setMode("create")}>
-                Create Room
-              </button>
-              <button className="btn" onClick={() => setMode("join")}>
-                Join Room
-              </button>
-              <button className="btn" onClick={() => setMode("howto")}>
-                How To Play
-              </button>
-            </div>
-          </div>
-        )}
-
-        {mode === "create" && (
-          <form className="menu-panel glass-panel fade-in-up" onSubmit={handleCreate}>
-            <p className="text-dim">A new room will be created with a shareable code.</p>
-            <div className="menu-actions">
-              <button type="submit" className="btn btn-primary">
-                Create & Enter Lobby
-              </button>
-              <button type="button" className="btn" onClick={() => setMode("root")}>
-                Back
-              </button>
-            </div>
-          </form>
-        )}
-
-        {mode === "join" && (
-          <form className="menu-panel glass-panel fade-in-up" onSubmit={handleJoin}>
-            <label className="menu-label">Room Code</label>
-            <input
-              className="menu-input menu-input-code"
-              value={roomCode}
-              onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
-              placeholder="X7K92"
-              maxLength={5}
-            />
-            <div className="menu-actions">
-              <button type="submit" className="btn btn-primary" disabled={roomCode.length < 5}>
-                Join Room
-              </button>
-              <button type="button" className="btn" onClick={() => setMode("root")}>
-                Back
-              </button>
-            </div>
-          </form>
-        )}
-
-        {error && (
-          <div className="menu-error glass-panel">
-            {error}
-            <button className="menu-error-dismiss" onClick={clearError}>
-              ×
-            </button>
-          </div>
-        )}
+        <div className="menu-right">
+          <HeroTiles />
+        </div>
       </div>
-    </div>
+      <div className="menu-foot">2–4 players · AI opponents · ~10 min matches</div>
+    </Backdrop>
   );
 }

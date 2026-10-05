@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useGameStore } from "../state/gameStore.js";
 import { sendChatMessage } from "../networking/SocketClient.js";
+import Icon from "./Icon.jsx";
 import "./ChatPanel.css";
 
 export default function ChatPanel() {
@@ -14,9 +15,7 @@ export default function ChatPanel() {
     if (listRef.current) listRef.current.scrollTop = listRef.current.scrollHeight;
   }, [messages]);
 
-  function colorFor(senderId) {
-    return gameState?.players.find((p) => p.id === senderId)?.color || "cyan";
-  }
+  const colorFor = (senderId) => gameState?.players.find((p) => p.id === senderId)?.color || "cyan";
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -27,28 +26,20 @@ export default function ChatPanel() {
 
   return (
     <div className="chat-panel glass-panel">
-      <h3 className="font-display chat-panel-title">COMMS</h3>
+      <h3 className="panel-title">COMMS</h3>
       <div className="chat-messages scrollbar-thin" ref={listRef}>
-        {messages.length === 0 && <p className="text-faint chat-empty">No messages yet.</p>}
+        {messages.length === 0 && <p className="text-faint chat-empty">No transmissions yet.</p>}
         {messages.map((m, i) => (
-          <div className="chat-message" key={i}>
-            <span className={`chat-sender player-${colorFor(m.playerId)} ${m.playerId === playerId ? "chat-sender-me" : ""}`}>
-              {m.name}:
-            </span>
+          <div className={`chat-message ${m.playerId === playerId ? "chat-message-me" : ""}`} key={i}>
+            <span className={`chat-sender player-${colorFor(m.playerId)}`}>{m.name}</span>
             <span className="chat-text">{m.text}</span>
           </div>
         ))}
       </div>
       <form className="chat-input-row" onSubmit={handleSubmit}>
-        <input
-          className="menu-input chat-input"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Message commanders..."
-          maxLength={300}
-        />
-        <button className="btn" type="submit">
-          Send
+        <input className="chat-input" value={text} onChange={(e) => setText(e.target.value)} placeholder="Message commanders…" maxLength={300} />
+        <button className="btn chat-send" type="submit" aria-label="Send">
+          <Icon name="chat" size={16} />
         </button>
       </form>
     </div>

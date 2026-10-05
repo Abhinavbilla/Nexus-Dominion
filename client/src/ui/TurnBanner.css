@@ -1,0 +1,61 @@
+.game-board-wrap .turn-banner {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.turn-banner-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 1.1rem 4rem;
+  background: linear-gradient(90deg, transparent, rgba(7, 9, 15, 0.82) 22%, rgba(7, 9, 15, 0.82) 78%, transparent);
+  animation: banner-sweep 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  border-top: 1px solid rgba(233, 180, 76, 0.5);
+  border-bottom: 1px solid rgba(233, 180, 76, 0.5);
+}
+
+.turn-banner-title {
+  font-size: 2.4rem;
+  letter-spacing: 0.3em;
+  color: var(--gold-bright);
+  text-shadow: 0 0 24px rgba(233, 180, 76, 0.7);
+  padding-left: 0.3em;
+}
+
+.turn-banner-round .turn-banner-title {
+  color: var(--text);
+  text-shadow: 0 0 18px rgba(160, 190, 255, 0.5);
+  font-size: 1.8rem;
+}
+
+.turn-banner-sub {
+  font-family: var(--font-display);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  font-size: 0.82rem;
+  color: var(--text-dim);
+}
+
+@keyframes banner-sweep {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.4);
+  }
+  14% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+  80% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleX(1.08);
+  }
+}

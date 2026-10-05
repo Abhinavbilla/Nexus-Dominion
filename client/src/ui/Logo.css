@@ -1,0 +1,80 @@
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+}
+
+.logo-crest {
+  width: 84px;
+  height: 84px;
+  filter: drop-shadow(0 0 18px rgba(233, 180, 76, 0.4));
+}
+
+.logo-words {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+}
+
+.logo-nexus {
+  font-size: 3.4rem;
+  line-height: 0.95;
+  letter-spacing: 0.22em;
+  background: linear-gradient(180deg, #fff1c9 0%, #e9b44c 55%, #a8761f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.5));
+}
+
+.logo-dominion {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  letter-spacing: 0.62em;
+  color: var(--text-dim);
+}
+
+.logo-dominion i {
+  display: block;
+  width: 34px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold));
+}
+
+.logo-dominion i:last-child {
+  background: linear-gradient(90deg, var(--gold), transparent);
+}
+
+.logo-sm .logo-crest {
+  width: 44px;
+  height: 44px;
+}
+
+.logo-sm .logo-nexus {
+  font-size: 1.7rem;
+}
+
+.logo-sm .logo-dominion {
+  font-size: 0.7rem;
+}
+
+@media (max-width: 700px) {
+  .logo-crest {
+    width: 56px;
+    height: 56px;
+  }
+
+  .logo-nexus {
+    font-size: 2.3rem;
+  }
+
+  .logo-dominion {
+    font-size: 0.85rem;
+    letter-spacing: 0.4em;
+  }
+}

@@ -1,40 +1,96 @@
 .ai-explain {
-  padding: 12px;
+  padding: 0.9rem;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.55rem;
 }
 
-.ai-explain-title {
-  font-size: 0.8rem;
-  letter-spacing: 0.12em;
-  color: var(--accent, #5eeaff);
+.ai-explain-line {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  font-size: 0.88rem;
+}
+
+.ai-explain-line b {
+  font-family: var(--font-display);
+  letter-spacing: 0.06em;
 }
 
 .ai-explain-toggle {
   align-self: flex-start;
+  padding: 0.4em 0.9em;
+  font-size: 0.82rem;
 }
 
-.ai-explain-table {
-  width: 100%;
-  border-collapse: collapse;
+.ai-feats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ai-feat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.82rem;
+}
+
+.ai-feat-top {
+  display: flex;
+  justify-content: space-between;
+}
+
+.ai-feat-bar {
+  height: 4px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+}
+
+.ai-feat-fill {
+  height: 100%;
+  border-radius: inherit;
+}
+
+.ai-feat-fill.pos {
+  background: linear-gradient(90deg, #3aa56a, var(--success));
+}
+
+.ai-feat-fill.neg {
+  background: linear-gradient(90deg, #b94545, var(--danger));
+}
+
+.pos {
+  color: var(--success);
+}
+
+.neg {
+  color: var(--danger);
+}
+
+.ai-feat-calc {
+  font-size: 0.68rem;
+  color: var(--text-faint);
+}
+
+.ai-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--line-strong);
+  font-family: var(--font-display);
+  letter-spacing: 0.16em;
   font-size: 0.8rem;
 }
 
-.ai-explain-table td {
-  padding: 2px 0;
-}
-
-.ai-explain-table td:last-child {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-.ai-explain-total td {
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  font-weight: 700;
+.ai-total b {
+  font-size: 1.15rem;
+  color: var(--gold-bright);
 }
 
 .ai-explain-alt {
-  font-size: 0.75rem;
+  font-size: 0.74rem;
+  line-height: 1.35;
 }

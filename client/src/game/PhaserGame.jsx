@@ -11,6 +11,8 @@ export default function PhaserGame({ onHexClick, highlightKeys = [] }) {
 
   const gameState = useGameStore((s) => s.gameState);
   const selectedHex = useGameStore((s) => s.selectedHex);
+  const actionMode = useGameStore((s) => s.actionMode);
+  const setHoveredHex = useGameStore((s) => s.setHoveredHex);
 
   useEffect(() => {
     onHexClickRef.current = onHexClick;
@@ -24,17 +26,20 @@ export default function PhaserGame({ onHexClick, highlightKeys = [] }) {
       parent: el,
       width: el.clientWidth,
       height: el.clientHeight,
-      backgroundColor: "#060a14",
+      backgroundColor: "#07090f",
       audio: { noAudio: true }, // sound effects use Web Audio directly (audio/AudioManager.js)
       scene: GameScene,
     });
 
+    let disposed = false;
     game.events.once(Phaser.Core.Events.READY, () => {
+      if (disposed) return;
       const scene = game.scene.keys.GameScene;
       scene.onHexClick = onHexClickRef.current;
+      scene.onHoverHex = (hex) => useGameStore.getState().setHoveredHex(hex);
       sceneRef.current = scene;
       const current = useGameStore.getState();
-      if (current.gameState) scene.updateState(current.gameState, current.selectedHex);
+      if (current.gameState) scene.updateState(current.gameState, current.selectedHex, [], current.actionMode);
     });
 
     const handleResize = () => {
@@ -46,16 +51,20 @@ export default function PhaserGame({ onHexClick, highlightKeys = [] }) {
 
     return () => {
       window.removeEventListener("resize", handleResize);
-      game.destroy(true);
+      disposed = true;
+      // React StrictMode mounts/unmounts immediately; destroying a game that has not finished
+      // booting throws inside Phaser, so wait for READY first.
+      if (game.isBooted) game.destroy(true);
+      else game.events.once(Phaser.Core.Events.READY, () => game.destroy(true));
       sceneRef.current = null;
     };
   }, []);
 
   useEffect(() => {
     if (sceneRef.current && gameState) {
-      sceneRef.current.updateState(gameState, selectedHex, highlightKeys);
+      sceneRef.current.updateState(gameState, selectedHex, highlightKeys, actionMode);
     }
-  }, [gameState, selectedHex, highlightKeys]);
+  }, [gameState, selectedHex, highlightKeys, actionMode]);
 
   return <div ref={containerRef} className="phaser-container" />;
 }

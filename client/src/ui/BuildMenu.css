@@ -1,62 +1,79 @@
 .build-menu {
-  padding: 1rem;
+  padding: 0.9rem;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-}
-
-.build-menu-title {
-  margin: 0;
-  font-size: 0.85rem;
-  color: var(--color-text-dim);
-  letter-spacing: 0.1em;
-}
-
-.build-menu-hint,
-.build-menu-prompt {
-  margin: 0;
-  font-size: 0.78rem;
-}
-
-.build-option {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  padding: 0.55em 0.75em;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-panel-border);
-  background: rgba(255, 255, 255, 0.02);
-  text-align: left;
-}
-
-.build-option-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
   gap: 0.5rem;
 }
 
-.build-option-label {
-  font-weight: 700;
-  font-size: 0.92rem;
+.build-menu-hint {
+  margin: 0;
+  font-size: 0.82rem;
 }
 
-.build-option-effect {
-  font-size: 0.75rem;
+.build-card {
+  display: flex;
+  gap: 0.7rem;
+  align-items: stretch;
+  padding: 0.5rem;
+  text-align: left;
+  color: var(--text);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.25);
+  transition: all 0.14s ease;
 }
 
-.build-option-error {
-  font-size: 0.72rem;
-  color: var(--color-danger);
+.build-card:hover:not(:disabled) {
+  border-color: rgba(76, 201, 176, 0.7);
+  transform: translateY(-1px);
 }
 
-.build-option-active {
-  border-color: var(--color-accent);
-  background: rgba(94, 234, 255, 0.12);
-  box-shadow: var(--glow-sm);
+.build-card-active {
+  border-color: #4cc9b0;
+  background: linear-gradient(90deg, rgba(76, 201, 176, 0.2), rgba(0, 0, 0, 0.25));
+  box-shadow: 0 0 18px rgba(76, 201, 176, 0.25);
 }
 
-.build-option:disabled {
-  opacity: 0.4;
+.build-card:disabled {
+  opacity: 0.42;
   cursor: not-allowed;
+}
+
+.build-card-art {
+  width: 62px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: radial-gradient(circle at 50% 70%, rgba(120, 140, 200, 0.28), rgba(0, 0, 0, 0.3));
+  overflow: hidden;
+}
+
+.build-card-art img {
+  width: 100%;
+  height: auto;
+  max-height: 66px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+}
+
+.build-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.build-card-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.02rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.build-card-effect {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  line-height: 1.25;
 }

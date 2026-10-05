@@ -13,6 +13,8 @@ import AIExplanation from "./AIExplanation.jsx";
 import EventLog from "./EventLog.jsx";
 import PlayerList from "./PlayerList.jsx";
 import ChatPanel from "./ChatPanel.jsx";
+import HexTooltip from "./HexTooltip.jsx";
+import TurnBanner from "./TurnBanner.jsx";
 import "./GameScreen.css";
 
 function computeHighlightKeys(gameState, me, actionMode, pendingBuildType) {
@@ -83,7 +85,7 @@ export default function GameScreen() {
 
   return (
     <div className="game-root">
-      <div className="game-topbar glass-panel">
+      <div className="game-topbar">
         <HUD />
       </div>
 
@@ -97,6 +99,8 @@ export default function GameScreen() {
 
         <div className="game-board-wrap">
           <PhaserGame onHexClick={handleHexClick} highlightKeys={highlightKeys} />
+          <HexTooltip />
+          <TurnBanner />
         </div>
 
         <div className="game-right-panel">

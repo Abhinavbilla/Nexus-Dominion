@@ -1,6 +1,36 @@
 import { useGameStore, getMyPlayer, isMyTurn } from "../state/gameStore.js";
 import { getModeConfig } from "../config.js";
+import Icon from "./Icon.jsx";
+import { PlayerEmblem, ResourceChip } from "./bits.jsx";
 import "./HUD.css";
+
+function TimerRing({ seconds, total }) {
+  const r = 17;
+  const c = 2 * Math.PI * r;
+  const frac = Math.max(0, Math.min(1, (seconds ?? 0) / total));
+  const low = seconds != null && seconds <= 8;
+  return (
+    <div className={`timer-ring ${low ? "timer-ring-low" : ""}`} title="Time left this turn">
+      <svg width="44" height="44" viewBox="0 0 44 44">
+        <circle cx="22" cy="22" r={r} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="3.5" />
+        <circle
+          cx="22"
+          cy="22"
+          r={r}
+          fill="none"
+          stroke={low ? "var(--danger)" : "var(--gold)"}
+          strokeWidth="3.5"
+          strokeLinecap="round"
+          strokeDasharray={c}
+          strokeDashoffset={c * (1 - frac)}
+          transform="rotate(-90 22 22)"
+          style={{ transition: "stroke-dashoffset 1s linear, stroke 0.3s" }}
+        />
+      </svg>
+      <span className="timer-ring-text mono">{seconds ?? "--"}</span>
+    </div>
+  );
+}
 
 export default function HUD() {
   const gameState = useGameStore((s) => s.gameState);
@@ -9,53 +39,83 @@ export default function HUD() {
   const toggleMuted = useGameStore((s) => s.toggleMuted);
   const me = getMyPlayer();
   const myTurn = isMyTurn();
-  const currentPlayer = gameState?.players[gameState.currentPlayerIndex];
+  const current = gameState?.players[gameState.currentPlayerIndex];
 
   if (!gameState || !me) return null;
 
-  const maxRounds = getModeConfig(gameState.mode).MAX_ROUNDS;
-  const timerLow = turnTimeRemaining <= 10;
+  const mode = getModeConfig(gameState.mode);
+  const roundPct = Math.min(100, (gameState.currentRound / mode.MAX_ROUNDS) * 100);
+  const dpPct = Math.min(100, (me.dominionPoints / mode.VICTORY_SCORE) * 100);
 
   return (
     <div className="hud glass-panel">
-      <div className="hud-section">
-        <span className="text-faint">ROUND</span>
-        <span className="hud-value font-display">
-          {gameState.currentRound}/{maxRounds}
-        </span>
+      <div className="hud-brand">
+        <svg width="30" height="30" viewBox="0 0 40 40">
+          <path d="M20 2.5 35.5 11v18L20 37.5 4.5 29V11z" fill="none" stroke="var(--gold)" strokeWidth="2.4" strokeLinejoin="round" />
+          <path d="M20 10 28.5 15v10L20 30l-8.5-5V15z" fill="var(--gold)" fillOpacity="0.85" />
+        </svg>
+        <span className="hud-brand-text font-title">NEXUS</span>
       </div>
 
-      <div className="hud-section hud-turn">
-        <span className="text-faint">TURN</span>
-        <span className={`hud-value font-display player-${currentPlayer?.color}`}>
-          {myTurn ? "YOUR TURN" : currentPlayer?.name}
+      <div className="hud-block">
+        <span className="hud-label">ROUND</span>
+        <span className="hud-big mono">
+          {gameState.currentRound}
+          <span className="hud-dim">/{mode.MAX_ROUNDS}</span>
         </span>
+        <div className="hud-meter">
+          <div className="hud-meter-fill" style={{ width: `${roundPct}%` }} />
+        </div>
+      </div>
+
+      <div className={`hud-turn ${myTurn ? "hud-turn-mine" : ""}`}>
+        <PlayerEmblem color={current?.color} ai={current?.isAI} size={38} active />
+        <div className="hud-turn-text">
+          <span className="hud-label">{myTurn ? "YOUR TURN" : "TURN"}</span>
+          <span className={`hud-turn-name player-${current?.color}`}>{current?.name}</span>
+        </div>
+        <TimerRing seconds={turnTimeRemaining} total={mode.TURN_DURATION_SECONDS} />
       </div>
 
       {gameState.thresholdReached && (
-        <div className="hud-section">
-          <span className="text-faint">FINAL ROUND</span>
-          <span className="hud-value font-display">Score reached</span>
+        <div className="hud-final">
+          <Icon name="crown" size={16} color="var(--gold-bright)" />
+          <span>FINAL ROUND</span>
         </div>
       )}
 
-      <div className={`hud-section hud-timer ${timerLow ? "hud-timer-low" : ""}`}>
-        <span className="text-faint">TIME</span>
-        <span className="hud-value font-display">{turnTimeRemaining ?? "--"}s</span>
-      </div>
-
-      <div className="hud-divider" />
+      <div className="hud-spacer" />
 
       <div className="hud-resources">
-        <span className="hud-resource">🪵 {me.resources.wood}</span>
-        <span className="hud-resource">⛏ {me.resources.metal}</span>
-        <span className="hud-resource">⚡ {me.resources.energy}</span>
-        <span className="hud-resource hud-dominion">◆ {me.dominionPoints} DP</span>
-        <span className="hud-resource">AP {me.actionPoints}/2</span>
+        <ResourceChip kind="wood" value={me.resources.wood} />
+        <ResourceChip kind="metal" value={me.resources.metal} />
+        <ResourceChip kind="energy" value={me.resources.energy} />
       </div>
 
-      <button className="hud-mute" onClick={toggleMuted} title={muted ? "Unmute" : "Mute"}>
-        {muted ? "🔇" : "🔊"}
+      <div className="hud-block hud-dominion" title={`Dominion Points — first to ${mode.VICTORY_SCORE} wins`}>
+        <span className="hud-label">
+          <Icon name="dominion" size={13} color="var(--gold)" /> DOMINION
+        </span>
+        <span className="hud-big mono" style={{ color: "var(--gold-bright)" }}>
+          {me.dominionPoints}
+          <span className="hud-dim">/{mode.VICTORY_SCORE}</span>
+        </span>
+        <div className="hud-meter hud-meter-gold">
+          <div className="hud-meter-fill" style={{ width: `${dpPct}%` }} />
+        </div>
+      </div>
+
+      <div className="hud-ap" title="Action Points left this turn">
+        <span className="hud-label">ACTIONS</span>
+        <div className="hud-ap-pips">
+          {[0, 1].map((i) => (
+            <span key={i} className={`ap-pip ${i < me.actionPoints ? "ap-pip-on" : ""}`} />
+          ))}
+        </div>
+      </div>
+
+      <button className="hud-icon-btn" onClick={toggleMuted} title={muted ? "Unmute" : "Mute"} aria-label="Toggle sound">
+        <Icon name={muted ? "mute" : "sound"} size={20} />
       </button>
     </div>
   );
