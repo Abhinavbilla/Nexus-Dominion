@@ -19,7 +19,7 @@
 
 .ev {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   flex-wrap: wrap;
   gap: 0.45rem;
   font-size: 0.86rem;
@@ -30,6 +30,16 @@
 .ev-dim {
   opacity: 0.6;
   font-size: 0.8rem;
+}
+
+.ev-body {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.ev-chain {
+  flex-basis: 100%;
+  margin-left: 2.2rem;
 }
 
 .ev-round {
