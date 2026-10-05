@@ -1,0 +1,390 @@
+/* Design refinement layer (loaded last).
+   Goal: a plain, conventional application UI — flush panels separated by 1px rules, solid
+   fills, small corner radii, no glow / gradient / pill decoration. Component CSS files keep
+   layout; this file owns surface and control styling so it can be tuned in one place. */
+
+:root {
+  --r: 3px;
+}
+
+/* ---------------------------------------------------------------- surfaces */
+.glass-panel,
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+.glass-panel::before {
+  display: none;
+}
+
+.panel-title {
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  color: var(--text-dim);
+}
+
+.panel-title::after {
+  background: var(--line);
+}
+
+/* ---------------------------------------------------------------- buttons */
+.btn {
+  border-radius: var(--r);
+  border: 1px solid var(--line-strong);
+  background: var(--surface-3);
+  box-shadow: none;
+  font-size: 0.86rem;
+  letter-spacing: 0.08em;
+  padding: 0.55em 1.1em;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+
+.btn:hover:not(:disabled) {
+  background: #2d3a5c;
+  border-color: var(--text-faint);
+  transform: none;
+  box-shadow: none;
+}
+
+.btn:active:not(:disabled) {
+  background: var(--surface-2);
+  transform: none;
+}
+
+.btn.btn-primary {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #1b1304;
+  box-shadow: none;
+}
+
+.btn.btn-primary:hover:not(:disabled) {
+  background: var(--gold-bright);
+  border-color: var(--gold-bright);
+  filter: none;
+}
+
+.btn.btn-danger {
+  background: transparent;
+  color: #ff8f8f;
+  border-color: rgba(238, 90, 90, 0.6);
+}
+
+.btn.btn-danger:hover:not(:disabled) {
+  background: rgba(238, 90, 90, 0.16);
+  border-color: var(--danger);
+  box-shadow: none;
+}
+
+.btn.btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-dim);
+}
+
+.btn.btn-ghost:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--line-strong);
+  background: transparent;
+}
+
+/* every pill-shaped control becomes a plain small-radius control */
+.exit-btn,
+.hintbar-help,
+.pcard-remove,
+.lobby-ai-remove,
+.hud-icon-btn,
+.hud-final,
+.res-chip,
+.hud-turn,
+.sidetab-badge,
+.pcard-you,
+.ev-chain,
+.guide-dots i,
+.art-final,
+.art-chain-rewards span,
+.art-mods em,
+.atk-pill,
+.victory-votes span,
+.hexcluster-label {
+  border-radius: var(--r);
+}
+
+.hud-icon-btn {
+  width: 34px;
+  height: 34px;
+}
+
+/* ---------------------------------------------------------------- game screen: flush layout */
+.game-root {
+  padding: 0;
+  gap: 0;
+  background: var(--bg-0);
+}
+
+.game-middle {
+  gap: 0;
+}
+
+.game-left,
+.game-center,
+.game-right {
+  gap: 0;
+}
+
+.game-left {
+  background: var(--surface);
+  border-right: 1px solid var(--line);
+}
+
+.game-right {
+  background: var(--surface);
+  border-left: 1px solid var(--line);
+}
+
+.game-context {
+  gap: 0;
+}
+
+.game-root .glass-panel,
+.game-root .hud {
+  border-radius: 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  box-shadow: none;
+  background: var(--surface);
+}
+
+.game-root .hud {
+  width: 100%;
+  border-bottom-color: var(--line-strong);
+}
+
+.game-root .sidetabs {
+  border-bottom: 0;
+}
+
+.game-board-wrap {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.hintbar {
+  border-radius: 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.hintbar-go,
+.hintbar-act,
+.hintbar-ready,
+.hintbar-danger {
+  background: var(--surface);
+  border-color: var(--line);
+}
+
+/* ---------------------------------------------------------------- HUD */
+.hud-turn {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  box-shadow: none;
+}
+
+.hud-turn-mine {
+  background: var(--surface-2);
+  border-color: var(--gold);
+  box-shadow: none;
+}
+
+.hud-final {
+  background: transparent;
+  animation: none;
+}
+
+.timer-ring-low {
+  animation: none;
+}
+
+.res-chip {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+}
+
+.hud-meter-gold .hud-meter-fill {
+  box-shadow: none;
+  background: var(--gold);
+}
+
+.ap-pip-on {
+  box-shadow: none;
+  background: var(--gold);
+}
+
+.hud-icon-btn {
+  background: transparent;
+}
+
+/* ---------------------------------------------------------------- action tiles */
+.action-bar {
+  padding: 0.75rem;
+}
+
+.action-btn {
+  border-radius: var(--r);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  box-shadow: none;
+}
+
+.action-btn:hover:not(:disabled) {
+  transform: none;
+  background: var(--surface-3);
+  border-color: var(--text-faint);
+}
+
+.action-btn-active {
+  background: var(--surface-3);
+  border-color: var(--tint);
+  box-shadow: inset 0 -3px 0 var(--tint);
+}
+
+.action-btn-icon {
+  background: none;
+  border: 0;
+  width: 34px;
+  height: 34px;
+}
+
+.action-btn-key,
+.hintbar-x {
+  border-radius: 2px;
+}
+
+.action-end-ready {
+  animation: none;
+  box-shadow: none;
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #1b1304;
+}
+
+/* ---------------------------------------------------------------- cards */
+.pcard {
+  border-radius: var(--r);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  box-shadow: none;
+}
+
+.pcard-active {
+  background: var(--surface-3);
+  border-color: var(--line-strong);
+  border-left: 3px solid var(--pc);
+  box-shadow: none;
+}
+
+.pcard-turn {
+  display: none;
+}
+
+.pcard-remove {
+  background: transparent;
+}
+
+.pcard-remove-armed {
+  background: var(--danger);
+}
+
+.build-card,
+.lobby-ai-card,
+.lobby-slot,
+.inspector-legend-row,
+.art-action,
+.art-way,
+.art-tip,
+.howto-card {
+  border-radius: var(--r);
+}
+
+.build-card {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+}
+
+.build-card:hover:not(:disabled) {
+  transform: none;
+  border-color: var(--text-faint);
+}
+
+.build-card-active {
+  background: var(--surface-3);
+  border-color: #4cc9b0;
+  box-shadow: none;
+}
+
+.lobby-ai-card:hover {
+  transform: none;
+  background: var(--surface-3);
+  border-color: var(--text-faint);
+}
+
+.lobby-slot-filled {
+  background: var(--surface-2);
+  border-color: var(--line-strong);
+  border-left: 3px solid var(--pc);
+}
+
+.sidetabs-head {
+  padding: 0 0.5rem;
+}
+
+.sidetab {
+  letter-spacing: 0.1em;
+}
+
+/* ---------------------------------------------------------------- misc */
+.lobby-code,
+.victory-outcome-won,
+.logo-crest {
+  filter: none;
+  text-shadow: none;
+}
+
+.turn-banner-inner {
+  border-radius: 0;
+}
+
+.guide-tab,
+.guide-tip,
+.guide-art,
+.atk-side,
+.atk-verdict {
+  border-radius: var(--r);
+}
+
+.guide-tip {
+  border-radius: 0 var(--r) var(--r) 0;
+}
+
+.menu-input,
+.chat-input {
+  border-radius: var(--r);
+  background: var(--bg-1);
+}
+
+.menu-input:focus,
+.chat-input:focus {
+  box-shadow: none;
+}
+
+@media (max-width: 900px) {
+  .game-left,
+  .game-right {
+    border: 0;
+  }
+}
