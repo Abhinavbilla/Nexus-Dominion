@@ -106,33 +106,68 @@ function drawMetal(ctx) {
   ingot(ctx, 58, 78, 54, 26, 14);
 }
 
+// Energy: a glossy glass orb full of plasma on a steel base, with a bright bolt inside.
 function drawEnergy(ctx) {
-  contactShadow(ctx, 112);
-  ctx.save();
-  ctx.shadowColor = "rgba(255,210,60,0.9)";
-  ctx.shadowBlur = 22;
-  ctx.fillStyle = radialGradient(ctx, 56, 52, 4, 58, [[0, "#3a3010"], [1, "#12100a"]]);
+  contactShadow(ctx, 114);
+
+  // steel base: side band + top ellipse
+  ctx.fillStyle = linearGradient(ctx, 30, 0, 98, 0, [[0, "#3a4358"], [0.4, "#8e9bb5"], [1, "#2b3245"]]);
   ctx.beginPath();
-  ctx.arc(64, 62, 50, 0, Math.PI * 2);
+  ctx.moveTo(30, 100);
+  ctx.lineTo(30, 108);
+  ctx.ellipse(64, 108, 34, 9, 0, Math.PI, 0, true);
+  ctx.lineTo(98, 100);
+  ctx.closePath();
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(64, 108, 34, 9, 0, 0, Math.PI);
+  ctx.fillStyle = "#222a3a";
+  ctx.fill();
+  ctx.fillStyle = linearGradient(ctx, 30, 94, 98, 112, [[0, "#c5d0e6"], [1, "#6a7692"]]);
+  ctx.beginPath();
+  ctx.ellipse(64, 100, 34, 9, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // glowing orb
+  ctx.save();
+  ctx.shadowColor = "rgba(255,200,40,0.95)";
+  ctx.shadowBlur = 26;
+  ctx.fillStyle = radialGradient(ctx, 52, 40, 4, 48, [[0, "#fff4a8"], [0.3, "#ffd22e"], [0.72, "#d4820c"], [1, "#6b3a05"]]);
+  ctx.beginPath();
+  ctx.arc(64, 56, 42, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
-  ctx.lineWidth = 6;
-  ctx.strokeStyle = linearGradient(ctx, 20, 20, 108, 108, [[0, "#fff1a0"], [0.5, "#ffc93a"], [1, "#d98a10"]]);
-  ctx.beginPath();
-  ctx.arc(64, 62, 48, 0, Math.PI * 2);
-  ctx.stroke();
-  // bolt
+
+  // inner bolt
   ctx.save();
-  ctx.shadowColor = "#ffd23a";
-  ctx.shadowBlur = 14;
-  polygon(ctx, [[72, 22], [40, 70], [60, 70], [52, 104], [90, 54], [68, 54]]);
-  ctx.fillStyle = linearGradient(ctx, 50, 22, 90, 104, [[0, "#fffbd0"], [0.45, "#ffd83a"], [1, "#ff9a1a"]]);
+  ctx.shadowColor = "#fffbe0";
+  ctx.shadowBlur = 12;
+  polygon(ctx, [[72, 24], [46, 60], [62, 60], [55, 90], [84, 50], [68, 50]]);
+  ctx.fillStyle = linearGradient(ctx, 55, 24, 84, 90, [[0, "#ffffff"], [0.5, "#fff3a0"], [1, "#ffcf3a"]]);
   ctx.fill();
   ctx.restore();
-  ctx.strokeStyle = "rgba(255,255,255,0.8)";
-  ctx.lineWidth = 1.6;
-  polygon(ctx, [[72, 22], [40, 70], [60, 70], [52, 104], [90, 54], [68, 54]]);
+
+  // glass: dark rim on the shaded side, bright rim light, and a specular highlight
+  ctx.strokeStyle = "rgba(90,40,0,0.55)";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(64, 56, 41, 0.15 * Math.PI, 0.9 * Math.PI);
   ctx.stroke();
+  ctx.strokeStyle = "rgba(255,255,255,0.35)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(64, 56, 40, 1.15 * Math.PI, 1.6 * Math.PI);
+  ctx.stroke();
+  ctx.fillStyle = radialGradient(ctx, 46, 32, 0, 16, [[0, "rgba(255,255,255,0.85)"], [1, "rgba(255,255,255,0)"]]);
+  ctx.save();
+  ctx.translate(46, 32);
+  ctx.rotate(-0.6);
+  ctx.scale(1.5, 0.8);
+  ctx.translate(-46, -32);
+  ctx.beginPath();
+  ctx.arc(46, 32, 14, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
 }
 
 const DRAW = { wood: drawWood, metal: drawMetal, energy: drawEnergy };

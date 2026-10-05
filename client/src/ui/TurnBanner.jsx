@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { useGameStore, isMyTurn } from "../state/gameStore.js";
-import { rulesOf } from "./rules.js";
 import "./TurnBanner.css";
 
 // Cinematic "YOUR TURN" / "ROUND N" banner. Fires on turn and round changes only.
@@ -24,10 +23,9 @@ export default function TurnBanner() {
     const turnChanged = idx !== last.idx;
     if (!roundChanged && !turnChanged) return;
 
-    const max = rulesOf(gameState).maxRounds;
     let next = null;
-    if (mine) next = { id: Date.now(), title: "YOUR TURN", sub: roundChanged ? `Round ${round} of ${max}` : "Spend your 2 actions", kind: "mine" };
-    else if (roundChanged) next = { id: Date.now(), title: `ROUND ${round}`, sub: `of ${max}`, kind: "round" };
+    if (mine) next = { id: Date.now(), title: "YOUR TURN", sub: roundChanged ? `Round ${round}` : "Spend your 2 actions", kind: "mine" };
+    else if (roundChanged) next = { id: Date.now(), title: `ROUND ${round}`, sub: "Everyone plays once", kind: "round" };
     if (!next) return;
     setBanner(next);
     const t = setTimeout(() => setBanner(null), 1500);

@@ -144,7 +144,7 @@ Turn-based multiplayer.
 ## Match duration
 
 Normal mode:
-- Maximum rounds scale with player count (55 / 40 / 30 for 2 / 3 / 4 players).
+- No round limit: a match ends only when the Dominion target is reached.
 - 25-second turn timer.
 - 2 Action Points per player turn.
 
@@ -1179,13 +1179,10 @@ first in the deciding round would have a systematic advantage. Simulation
 Configurable via `VICTORY_AT_ROUND_END` (default `true`). Setting it to `false`
 restores immediate victory.
 
-## Round-Limit Victory
+## No Round Limit
 
-If no player reaches the threshold:
-
-The game ends after the configured round limit (default 55 rounds with 2 players, 40 with 3, 30 with 4).
-
-The player with the highest Dominion Points wins.
+There is no maximum number of rounds. A round is one full cycle in which every player takes one
+turn. The match continues, round after round, until a player reaches the Dominion target.
 
 ---
 
@@ -1572,7 +1569,7 @@ The project must contain a configurable Demo Mode.
 
 Normal:
 
-MAX_ROUNDS = 30 (55 / 40 / 30 by player count)
+MAX_ROUNDS = none (no round limit)
 TURN_DURATION = 30 seconds
 VICTORY_SCORE = 90 (200 / 120 / 90 by player count)
 

@@ -1,17 +1,15 @@
 {
   "modes": {
     "normal": {
-      "MAX_ROUNDS": 30,
       "TURN_DURATION_SECONDS": 30,
       "VICTORY_SCORE": 90,
       "BY_PLAYER_COUNT": {
-        "2": { "VICTORY_SCORE": 200, "MAX_ROUNDS": 55 },
-        "3": { "VICTORY_SCORE": 120, "MAX_ROUNDS": 40 },
-        "4": { "VICTORY_SCORE": 90, "MAX_ROUNDS": 30 }
+        "2": { "VICTORY_SCORE": 200 },
+        "3": { "VICTORY_SCORE": 120 },
+        "4": { "VICTORY_SCORE": 90 }
       }
     },
     "demo": {
-      "MAX_ROUNDS": 8,
       "TURN_DURATION_SECONDS": 15,
       "VICTORY_SCORE": 20
     }

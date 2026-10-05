@@ -53,7 +53,7 @@ export function createMatch({ matchId, mode, playersInput, initialSeed, config }
   const state = new GameState({ matchId, initialSeed, boardSeed, mode, cells, players });
   state.rules = {
     victoryScore: config.VICTORY_SCORE,
-    maxRounds: config.MAX_ROUNDS,
+    maxRounds: config.MAX_ROUNDS ?? null, // null = no round limit; only the Dominion target ends a match
     turnSeconds: config.TURN_DURATION_SECONDS,
     actionPoints: config.ACTION_POINTS_PER_TURN,
     chainPerRound: config.DOMINION_REWARDS.SUPPLY_CHAIN_PER_ROUND || 0,
@@ -132,7 +132,7 @@ export function endTurn(state, config, reason = "manual") {
     return { roundEnded: true, matchFinished: true };
   }
 
-  if (state.currentRound > config.MAX_ROUNDS) {
+  if (config.MAX_ROUNDS && state.currentRound > config.MAX_ROUNDS) {
     finishByRoundLimit(state, config);
     return { roundEnded: true, matchFinished: true };
   }

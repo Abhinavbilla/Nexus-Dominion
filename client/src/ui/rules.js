@@ -8,7 +8,7 @@ export function rulesOf(gameState) {
   const cfg = getModeConfig(gameState?.mode, gameState?.players?.length);
   return {
     victoryScore: cfg.VICTORY_SCORE,
-    maxRounds: cfg.MAX_ROUNDS,
+    maxRounds: cfg.MAX_ROUNDS ?? null,
     turnSeconds: cfg.TURN_DURATION_SECONDS,
     actionPoints: cfg.ACTION_POINTS_PER_TURN,
     chainPerRound: cfg.DOMINION_REWARDS.SUPPLY_CHAIN_PER_ROUND || 0,

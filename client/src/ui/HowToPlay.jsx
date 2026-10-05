@@ -243,7 +243,7 @@ const PAGES = [
     id: "turn",
     icon: "ap",
     title: "Your Turn",
-    lead: `Each turn you get ${BASE_CONFIG.ACTION_POINTS_PER_TURN} actions and ${BASE_CONFIG.modes.normal.TURN_DURATION_SECONDS} seconds. Spend them on:`,
+    lead: `Each turn you get ${BASE_CONFIG.ACTION_POINTS_PER_TURN} actions and ${BASE_CONFIG.modes.normal.TURN_DURATION_SECONDS} seconds. One round = every player takes one turn, then the next round begins and resources are produced.`,
     art: <TurnArt />,
     points: [
       ["claim", "Claim — take a free neutral hex that touches your land"],
@@ -304,7 +304,7 @@ const PAGES = [
     points: [
       ["timer", "Everyone finishes the round, so every player gets the same number of turns."],
       ["trophy", "Highest Dominion wins. Ties: most hexes, then most Cities, then most resources."],
-      ["ap", `If nobody reaches the target, the highest score after the round limit (${BY[2].MAX_ROUNDS} rounds with 2 players) wins.`],
+      ["ap", "There is no round limit. The match runs until someone reaches the target."],
       ["eye", "Your Dominion bar and everyone else's are always visible."],
     ],
     tip: "Out in front? Fortify and protect your chain. Behind? Attack the leader's links.",

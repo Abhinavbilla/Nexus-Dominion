@@ -44,7 +44,6 @@ export default function HUD() {
   if (!gameState || !me) return null;
 
   const rules = rulesOf(gameState);
-  const roundPct = Math.min(100, (gameState.currentRound / rules.maxRounds) * 100);
   const dpPct = Math.min(100, (me.dominionPoints / rules.victoryScore) * 100);
 
   return (
@@ -57,15 +56,10 @@ export default function HUD() {
         <span className="hud-brand-text font-title">NEXUS</span>
       </div>
 
-      <div className="hud-block">
+      <div className="hud-block" title="A round is one full cycle: every player takes one turn. Resources are produced at the start of each round.">
         <span className="hud-label">ROUND</span>
-        <span className="hud-big mono">
-          {gameState.currentRound}
-          <span className="hud-dim">/{rules.maxRounds}</span>
-        </span>
-        <div className="hud-meter">
-          <div className="hud-meter-fill" style={{ width: `${roundPct}%` }} />
-        </div>
+        <span className="hud-big mono">{gameState.currentRound}</span>
+        <span className="hud-sub">everyone plays once</span>
       </div>
 
       <div className={`hud-turn ${myTurn ? "hud-turn-mine" : ""}`}>

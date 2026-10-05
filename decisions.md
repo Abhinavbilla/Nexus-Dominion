@@ -336,3 +336,8 @@ by `resolveModeConfig(config, mode, playerCount)` and sent to clients as `gameSt
 Each active Supply Chain now also pays +1 Dominion at the start of every round
 (`DOMINION_REWARDS.SUPPLY_CHAIN_PER_ROUND`), so long games keep progressing and protecting or
 cutting a chain matters all game. Turn timer is 30 seconds.
+
+## No round limit (2026-10-05)
+`MAX_ROUNDS` was removed from every mode. Matches end only when the Dominion target for the
+player count is reached (then the final round plays out). The HUD shows the round number without
+a maximum, and the guide defines a round as one turn for every player.

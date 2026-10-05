@@ -37,6 +37,13 @@
   font-weight: 600;
 }
 
+.hud-sub {
+  font-size: 0.64rem;
+  color: var(--text-faint);
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
 .hud-big {
   font-size: 1.35rem;
   font-weight: 700;
