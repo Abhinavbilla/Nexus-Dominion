@@ -5,6 +5,9 @@ Factories and Cities, link them into **Supply Chains**, and fight over the map w
 in it. Friends play over the internet with a five-letter room code. If you don't have friends online you play
 against computer opponents that can tell you *why* they made each move.
 
+**Play it now: <https://nexus-dominion.onrender.com>**
+(hosted on a free plan, so if nobody has visited for a while the first load can take up to a minute to wake up)
+
 I built it as a full-stack project: a server that is the single source of truth, a rule engine shared between
 the server and the browser, a Phaser-rendered board inside a React interface, three AI opponents, and a
 simulation harness I used to balance the rules with data instead of gut feeling.
@@ -519,6 +522,10 @@ npm run balance                           # parameter sweeps -> simulation/resul
 **Playing:** open the page, enter a name, create a room, add AI opponents or send the code to friends, start.
 Keys in a match: `C` claim, `B` build, `A` attack, `F` fortify, `E` end turn, `Esc` cancel, `H` or `?` for the
 rules.
+
+**Live deployment.** The game is hosted on Render at <https://nexus-dominion.onrender.com> as a Docker web
+service built from this repository's `main` branch; every push redeploys it automatically, which also ends any
+match in progress.
 
 **Deploying permanently.** The `Dockerfile` builds the client and starts the server. `render.yaml` is a Render
 blueprint: push the repo to GitHub, create a Blueprint in Render and point it at the repository. The free plan
