@@ -7,7 +7,7 @@ import "./HowToPlay.css";
 
 const SECTIONS = [
   { icon: "crown", title: "Objective", body: "Expand your territory, build infrastructure, and earn Dominion Points. When someone reaches 40 Dominion the match enters its final round — everyone finishes the round, then the highest score wins. If nobody gets there, the best score after round 18 wins." },
-  { icon: "ap", title: "Turns & Actions", body: "Each turn you get 2 actions and 25 seconds. Every action — Claim, Build, Attack, Fortify — costs 1 action. End your turn early or let the timer run out. The starting player rotates every round." },
+  { icon: "ap", title: "Turns & Actions", body: "Each turn you get 2 actions and 30 seconds. Every action — Claim, Build, Attack, Fortify — costs 1 action. End your turn early or let the timer run out. The starting player rotates every round." },
   { icon: "claim", title: "Territory & Resources", body: "Claim neutral hexes next to your land. Forests, Mines and Energy Fields produce Wood, Metal and Energy every round. A Factory on them doubles the output." },
   { icon: "chain", title: "Supply Chains", body: "Link a Factory on a resource hex to one of your Cities through an unbroken path of your own hexes. An active chain pays bonus resources and a one-time Dominion reward (+4 for your first, +2 after) — but capturing a hex in the path breaks it." },
   { icon: "attack", title: "Combat", body: "No dice. Attack Strength (base 4, +1 flanking support, +1 with an active Supply Chain) is compared with Defense (base 3, +3 Fortress, +2 City, +1 per fortification level). Attack ≥ Defense captures the hex: +2 Dominion (+3 City Site, +4 enemy City)." },

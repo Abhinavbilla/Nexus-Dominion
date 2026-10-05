@@ -1095,7 +1095,7 @@ Maximum:
 Every turn:
 
 1. Current player receives 2 Action Points.
-2. Turn timer starts at 25 seconds.
+2. Turn timer starts at 30 seconds.
 3. Player performs valid actions.
 4. Server validates every action.
 5. State changes are broadcast.
@@ -1232,10 +1232,10 @@ During testing, evaluate alternative values:
 
 15 sec
 20 sec
-25 sec
+30 sec
 30 sec
 
-Use playtesting and simulation to determine whether the default should remain 25 seconds.
+Use playtesting and simulation to determine whether the default should remain 30 seconds.
 
 ---
 
@@ -1573,7 +1573,7 @@ The project must contain a configurable Demo Mode.
 Normal:
 
 MAX_ROUNDS = 18
-TURN_DURATION = 25 seconds
+TURN_DURATION = 30 seconds
 VICTORY_SCORE = 40
 
 Demo:

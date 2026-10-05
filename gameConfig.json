@@ -2,7 +2,7 @@
   "modes": {
     "normal": {
       "MAX_ROUNDS": 18,
-      "TURN_DURATION_SECONDS": 25,
+      "TURN_DURATION_SECONDS": 30,
       "VICTORY_SCORE": 40
     },
     "demo": {
