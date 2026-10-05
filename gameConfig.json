@@ -12,6 +12,8 @@
     }
   },
 
+  "VICTORY_AT_ROUND_END": true,
+
   "BOARD_RADIUS": 4,
   "TOTAL_HEXES": 61,
 
@@ -34,6 +36,12 @@
     { "q": 4, "r": 0 },
     { "q": 0, "r": -4 },
     { "q": 0, "r": 4 }
+  ],
+
+  "STARTING_POSITIONS_3P": [
+    { "q": 4, "r": 0 },
+    { "q": -4, "r": 4 },
+    { "q": 0, "r": -4 }
   ],
 
   "PLAYER_COLORS": ["cyan", "orange", "violet", "lime"],

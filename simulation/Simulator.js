@@ -22,9 +22,9 @@ export function createAI(type, rng) {
     case "random":
       return new RandomAI({ rng });
     case "greedy":
-      return new GreedyAI();
+      return new GreedyAI({ rng });
     case "strategic":
-      return new StrategicAI();
+      return new StrategicAI({ rng });
     default:
       throw new Error(`Unknown AI type "${type}"`);
   }

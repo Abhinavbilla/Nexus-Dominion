@@ -25,8 +25,9 @@ export const DEFAULT_WEIGHTS = {
 // features, and scored as sum(weight * feature). The explanation returned is
 // that exact table — nothing is reconstructed after the fact.
 export class StrategicAI {
-  constructor({ weights } = {}) {
+  constructor({ weights, rng = Math.random } = {}) {
     this.name = "strategic";
+    this.rng = rng;
     this.overrideWeights = weights;
   }
 
@@ -45,7 +46,11 @@ export class StrategicAI {
     }
     scored.sort((a, b) => b.total - a.total);
 
-    const best = scored[0];
+    // Equal-scoring actions are chosen at random (seeded in simulations) so
+    // board iteration order never systematically favors one seat or target.
+    const top = scored.filter((s) => Math.abs(s.total - scored[0]?.total) < 1e-9);
+    const best = top.length ? top[Math.floor(this.rng() * top.length)] : undefined;
+    if (best) scored.splice(scored.indexOf(best), 1), scored.unshift(best);
     if (!best || best.total <= 0) {
       return {
         action: null,
@@ -77,7 +82,7 @@ export class StrategicAI {
     const key = hexKey(action.q, action.r);
 
     const raw = {
-      victory: trial.winnerId === playerId ? 1 : 0,
+      victory: wonOrLeadsAtThreshold(state, trial, playerId) ? 1 : 0,
       dominionGain: after.dominionPoints - before.dominionPoints,
       resourceGain: estimateIncome(trial, config, playerId) - estimateIncome(state, config, playerId),
       chainCompletion: chainUpdate.newlyCompleted.filter((k) => k.startsWith(`${playerId}|`)).length * 1 + chainPotential(trial, cell, playerId),
@@ -114,6 +119,16 @@ export class StrategicAI {
     const total = features.reduce((sum, f) => sum + f.contribution, 0);
     return { action, total, features: features.filter((f) => f.value !== 0) };
   }
+}
+
+// Immediate-victory feature (spec.md §50.1). With round-end victory the match
+// is only decided after the round, so reaching the threshold while leading
+// counts as the winning move.
+function wonOrLeadsAtThreshold(before, trial, playerId) {
+  if (trial.winnerId === playerId) return true;
+  if (!trial.thresholdReached || before.thresholdReached) return false;
+  const me = trial.getPlayer(playerId).dominionPoints;
+  return trial.players.every((p) => p.id === playerId || p.dominionPoints < me);
 }
 
 function brief(entry) {

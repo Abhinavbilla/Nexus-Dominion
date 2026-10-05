@@ -21,10 +21,14 @@ function createEmptyStats() {
 // is index-aligned with config.STARTING_POSITIONS / config.PLAYER_COLORS —
 // join order determines starting corner and color.
 export function createMatch({ matchId, mode, playersInput, initialSeed, config }) {
-  const { boardSeed, cells } = generateBoard(initialSeed, config);
+  // Three players start on alternating hex corners (all pairwise 8 apart) so no
+  // seat is isolated or crowded; 2 and 4 players already use symmetric corners.
+  const startPositions =
+    playersInput.length === 3 && config.STARTING_POSITIONS_3P ? config.STARTING_POSITIONS_3P : config.STARTING_POSITIONS;
+  const { boardSeed, cells } = generateBoard(initialSeed, { ...config, STARTING_POSITIONS: startPositions });
 
   const players = playersInput.map((input, i) => {
-    const startPos = config.STARTING_POSITIONS[i];
+    const startPos = startPositions[i];
     const startCell = cells.get(`${startPos.q},${startPos.r}`);
     startCell.ownerId = input.id;
     startCell.building = BUILDING.COMMAND_HUB;
@@ -74,7 +78,7 @@ function getResourceTotal(player) {
 }
 
 // Round-limit victory + tie-breakers (spec.md §38-39).
-function finishByRoundLimit(state, config) {
+function finishByRoundLimit(state, config, reason = "round_limit") {
   const scored = state.players.map((player) => ({
     player,
     dominion: player.dominionPoints,
@@ -96,7 +100,7 @@ function finishByRoundLimit(state, config) {
     state.winReason = "draw";
   } else {
     state.winnerId = top.player.id;
-    state.winReason = "round_limit";
+    state.winReason = reason;
   }
   state.pushEvent({ type: "game_over", winnerId: state.winnerId, reason: state.winReason });
 }
@@ -112,6 +116,11 @@ export function endTurn(state, config, reason = "manual") {
 
   if (!roundEnded) {
     return { roundEnded: false, matchFinished: false };
+  }
+
+  if (state.thresholdReached) {
+    finishByRoundLimit(state, config, "dominion_threshold");
+    return { roundEnded: true, matchFinished: true };
   }
 
   if (state.currentRound > config.MAX_ROUNDS) {

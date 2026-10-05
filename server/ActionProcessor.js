@@ -20,6 +20,11 @@ function spend(player, cost) {
 
 function checkVictory(state, config) {
   if (state.status !== "playing") return;
+  if (config.VICTORY_AT_ROUND_END) {
+    // Every player gets the same number of turns; the winner is decided when the round ends.
+    if (state.players.some((p) => p.dominionPoints >= config.VICTORY_SCORE)) state.thresholdReached = true;
+    return;
+  }
   const winner = state.players.find((p) => p.dominionPoints >= config.VICTORY_SCORE);
   if (winner) {
     state.status = "finished";

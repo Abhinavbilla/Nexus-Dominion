@@ -32,6 +32,13 @@ export default function HUD() {
         </span>
       </div>
 
+      {gameState.thresholdReached && (
+        <div className="hud-section">
+          <span className="text-faint">FINAL ROUND</span>
+          <span className="hud-value font-display">Score reached</span>
+        </div>
+      )}
+
       <div className={`hud-section hud-timer ${timerLow ? "hud-timer-low" : ""}`}>
         <span className="text-faint">TIME</span>
         <span className="hud-value font-display">{turnTimeRemaining ?? "--"}s</span>

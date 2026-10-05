@@ -314,3 +314,17 @@ optimal, perfectly balanced, or best strategy without supporting evidence.
 | 10 | Terrain counts | Fixed: 25/11/11/9/5 | ⚠️ Changed |
 | 11 | Chain exclusivity | One chain per source hex | 🆕 Added |
 | 12 | Chain recalc timing | After every state-changing action | 🆕 Added |
+
+## Fairness amendment (2026-10-05)
+Mirror-match simulations (600+ games per player count, same AI in every seat) showed
+a clear first-mover skew when the match ended the instant a player reached the
+Victory Score (2p: 59/41; 4p: 28/33/17/21), plus a seat-isolation skew with 3 players.
+- **Round-end victory** (`VICTORY_AT_ROUND_END: true`): reaching the Victory Score only
+  flags the match; it ends when the current round completes, so every player has the
+  same number of turns. The winner is the player with the most Dominion, using the
+  existing tie-breakers (territory, Cities, resources). HUD shows "FINAL ROUND".
+- **3-player start corners** (`STARTING_POSITIONS_3P`): alternating corners (4,0), (-4,4),
+  (0,-4), all pairwise 8 apart. 2 and 4 players keep the existing symmetric corners.
+- **AI tie-breaking** is random among equal scores (seeded in simulations) so board order
+  cannot bias results.
+After these changes all seat win-rate distributions pass a chi-square test (p>0.05).
