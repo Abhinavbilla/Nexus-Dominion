@@ -1,0 +1,21 @@
+{
+  "name": "hex-dominion",
+  "private": true,
+  "version": "0.1.0",
+  "description": "NEXUS: DOMINION - multiplayer hex territorial strategy game",
+  "workspaces": [
+    "shared",
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "test": "vitest run",
+    "dev:server": "npm run dev -w server",
+    "dev:client": "npm run dev -w client",
+    "dev": "concurrently -n server,client -c blue,magenta \"npm:dev:server\" \"npm:dev:client\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "vitest": "^2.1.4"
+  }
+}

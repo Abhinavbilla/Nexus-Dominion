@@ -1,0 +1,56 @@
+.attack-preview {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.attack-preview-title {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-danger);
+  letter-spacing: 0.1em;
+}
+
+.attack-preview-stats {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.attack-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.5em 0.6em;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 0.68rem;
+}
+
+.attack-stat-value {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--color-text);
+}
+
+.attack-outcome {
+  text-align: center;
+  padding: 0.4em;
+  border-radius: var(--radius-md);
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.attack-outcome-success {
+  color: var(--color-success);
+  background: rgba(77, 255, 176, 0.1);
+  border: 1px solid rgba(77, 255, 176, 0.3);
+}
+
+.attack-outcome-fail {
+  color: var(--color-danger);
+  background: rgba(255, 85, 119, 0.1);
+  border: 1px solid rgba(255, 85, 119, 0.3);
+}

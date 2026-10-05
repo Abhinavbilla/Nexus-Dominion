@@ -1,0 +1,56 @@
+.player-list {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.player-list-title {
+  margin: 0 0 0.3rem;
+  font-size: 0.85rem;
+  color: var(--color-text-dim);
+  letter-spacing: 0.1em;
+}
+
+.player-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5em 0.6em;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+}
+
+.player-row-active {
+  border-color: var(--color-accent-soft);
+  background: rgba(94, 234, 255, 0.06);
+}
+
+.player-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+  flex-shrink: 0;
+}
+
+.player-row-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.player-row-name {
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+.player-row-stats {
+  font-size: 0.72rem;
+}
+
+.player-row-badge {
+  color: var(--color-accent);
+}

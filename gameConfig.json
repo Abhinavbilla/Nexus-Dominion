@@ -1,0 +1,117 @@
+{
+  "modes": {
+    "normal": {
+      "MAX_ROUNDS": 15,
+      "TURN_DURATION_SECONDS": 25,
+      "VICTORY_SCORE": 30
+    },
+    "demo": {
+      "MAX_ROUNDS": 8,
+      "TURN_DURATION_SECONDS": 15,
+      "VICTORY_SCORE": 20
+    }
+  },
+
+  "BOARD_RADIUS": 4,
+  "TOTAL_HEXES": 61,
+
+  "TERRAIN_COUNTS": {
+    "plains": 25,
+    "forest": 11,
+    "mine": 11,
+    "energy_field": 9,
+    "city_site": 5
+  },
+
+  "FAIRNESS": {
+    "MAX_RESOURCE_DISTANCE": 3,
+    "MAX_SUM_DIFFERENCE": 2,
+    "SEED_INCREMENT": 2654435769
+  },
+
+  "STARTING_POSITIONS": [
+    { "q": -4, "r": 0 },
+    { "q": 4, "r": 0 },
+    { "q": 0, "r": -4 },
+    { "q": 0, "r": 4 }
+  ],
+
+  "PLAYER_COLORS": ["cyan", "orange", "violet", "lime"],
+
+  "ACTION_POINTS_PER_TURN": 2,
+
+  "STARTING_RESOURCES": {
+    "wood": 6,
+    "metal": 4,
+    "energy": 4
+  },
+
+  "RESOURCE_GENERATION": {
+    "forest": { "wood": 1 },
+    "mine": { "metal": 1 },
+    "energy_field": { "energy": 1 },
+    "factory_bonus": 1,
+    "factory_on_plains_energy": 1,
+    "supply_chain_bonus": 2
+  },
+
+  "BUILD_COSTS": {
+    "factory": { "wood": 3, "metal": 2, "energy": 1, "actionPoints": 1 },
+    "fortress": { "metal": 2, "energy": 1, "actionPoints": 1 },
+    "city": { "wood": 4, "metal": 4, "energy": 2, "actionPoints": 1 }
+  },
+
+  "BUILD_LIMITS": {
+    "MAX_CITIES_PER_PLAYER": 2
+  },
+
+  "ATTACK_COSTS": {
+    "actionPoints": 1,
+    "metal": 3,
+    "energy": 2
+  },
+
+  "FORTIFY_COSTS": {
+    "actionPoints": 1,
+    "metal": 2,
+    "energy": 1
+  },
+
+  "DEFENSE_VALUES": {
+    "BASE_DEFENSE": 3,
+    "FORTRESS_BONUS": 3,
+    "CITY_BONUS": 2,
+    "FORTIFICATION_PER_LEVEL": 1,
+    "MAX_FORTIFICATION_LEVEL": 3
+  },
+
+  "ATTACK_VALUES": {
+    "BASE_ATTACK": 4,
+    "SUPPORT_BONUS": 1,
+    "SUPPORT_MIN_ADJACENT_FRIENDLY": 2,
+    "SUPPLY_CHAIN_BONUS": 1,
+    "MAX_ATTACK_STRENGTH": 6
+  },
+
+  "DOMINION_REWARDS": {
+    "CLAIM_NORMAL": 1,
+    "CLAIM_CITY_SITE": 2,
+    "CAPTURE_NORMAL": 1,
+    "CAPTURE_CITY_SITE": 2,
+    "CAPTURE_ENEMY_CITY": 3,
+    "BUILD_CITY": 3,
+    "SUPPLY_CHAIN_FIRST": 4,
+    "SUPPLY_CHAIN_SUBSEQUENT": 2
+  },
+
+  "AI_WEIGHTS": {
+    "dominionGain": 3,
+    "resourceGain": 1,
+    "chainCompletion": 5,
+    "chainDisruption": 4,
+    "defensiveValue": 2,
+    "threatProximity": 1,
+    "expansionValue": 1,
+    "resourceCost": -1
+  }
+}

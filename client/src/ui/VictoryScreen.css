@@ -1,0 +1,63 @@
+.victory-root {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.victory-panel {
+  position: relative;
+  z-index: 1;
+  width: min(520px, 92vw);
+  padding: 2.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  text-align: center;
+}
+
+.victory-game-title {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--color-text-dim);
+  letter-spacing: 0.2em;
+}
+
+.victory-winner {
+  margin: 0;
+  font-size: 2.4rem;
+  text-shadow: var(--glow-md);
+}
+
+.victory-score {
+  font-family: var(--font-display);
+  color: var(--color-accent);
+  margin-bottom: 1rem;
+}
+
+.victory-stats {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin: 1rem 0;
+}
+
+.victory-stat-row {
+  display: grid;
+  grid-template-columns: 1.2fr 0.6fr 0.8fr 1fr 0.8fr;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  padding: 0.4em 0.6em;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.02);
+  align-items: center;
+}
+
+.victory-stat-name {
+  font-weight: 700;
+  text-align: left;
+}
