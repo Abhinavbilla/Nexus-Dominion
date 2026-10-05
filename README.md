@@ -520,8 +520,8 @@ npm run balance                           # parameter sweeps -> simulation/resul
 ```
 
 **Playing:** open the page, enter a name, create a room, add AI opponents or send the code to friends, start.
-Keys in a match: `C` claim, `B` build, `A` attack, `F` fortify, `E` end turn, `Esc` cancel, `H` or `?` for the
-rules.
+Keys in a match: `C` claim, `B` build, `A` attack, `F` fortify, `E` end turn, `Esc` cancel, `M` mute, `H` or `?` for the
+rules. A speaker button (top right) sets the volume; it's remembered between visits.
 
 **Live deployment.** The game is hosted on Render at <https://nexus-dominion.onrender.com> as a Docker web
 service built from this repository's `main` branch; every push redeploys it automatically, which also ends any

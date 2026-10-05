@@ -1,8 +1,8 @@
 import { useGameStore, getMyPlayer, isMyTurn } from "../state/gameStore.js";
 import { rulesOf } from "./rules.js";
-import Icon from "./Icon.jsx";
 import { PlayerEmblem, ResourceChip } from "./bits.jsx";
 import ExitMatch from "./ExitMatch.jsx";
+import AudioControl from "./AudioControl.jsx";
 import "./HUD.css";
 
 function TimerRing({ seconds, total }) {
@@ -36,8 +36,6 @@ function TimerRing({ seconds, total }) {
 export default function HUD() {
   const gameState = useGameStore((s) => s.gameState);
   const turnTimeRemaining = useGameStore((s) => s.turnTimeRemaining);
-  const muted = useGameStore((s) => s.muted);
-  const toggleMuted = useGameStore((s) => s.toggleMuted);
   const me = getMyPlayer();
   const myTurn = isMyTurn();
   const current = gameState?.players[gameState.currentPlayerIndex];
@@ -108,9 +106,7 @@ export default function HUD() {
 
       <ExitMatch />
 
-      <button className="hud-icon-btn" onClick={toggleMuted} title={muted ? "Unmute" : "Mute"} aria-label="Toggle sound">
-        <Icon name={muted ? "mute" : "sound"} size={20} />
-      </button>
+      <AudioControl />
     </div>
   );
 }

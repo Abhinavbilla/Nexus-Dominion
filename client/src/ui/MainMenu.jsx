@@ -100,7 +100,7 @@ export default function MainMenu() {
           <HeroTiles />
         </div>
       </div>
-      <div className="menu-foot">2–4 players · AI opponents · ~10 min matches</div>
+      <div className="menu-foot">2–4 players · AI opponents · 30–40 min matches</div>
     </Backdrop>
   );
 }

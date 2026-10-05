@@ -196,6 +196,7 @@ export function createBus(ctx) {
   wet.connect(compressor);
   compressor.connect(master);
   master.connect(ctx.destination);
+  input.master = master; // exposed so the live volume can be adjusted
   return input;
 }
 
@@ -219,6 +220,7 @@ export function playSfx(name) {
   try {
     const out = getBus();
     if (!out || !SOUNDS[name]) return;
+    out.master.gain.setValueAtTime(MASTER_VOLUME * useGameStore.getState().volume, ctx.currentTime);
     if (ctx.state === "suspended") ctx.resume();
     SOUNDS[name](ctx, out, ctx.currentTime + 0.02);
   } catch {

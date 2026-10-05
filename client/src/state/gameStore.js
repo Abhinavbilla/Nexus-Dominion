@@ -4,6 +4,25 @@ import { create } from "zustand";
 // The client NEVER mutates `gameState` directly — it is only ever replaced
 // wholesale by whatever the server broadcasts. `ui` fields below are the
 // only client-local state (selection, action mode, chat, etc).
+// Sound settings are remembered between visits (private windows may block storage; that is fine).
+const AUDIO_KEY = "hexdominion_audio";
+function loadAudioSettings() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(AUDIO_KEY) || "{}");
+    return { muted: Boolean(saved.muted), volume: typeof saved.volume === "number" ? Math.min(1, Math.max(0, saved.volume)) : 0.7 };
+  } catch {
+    return { muted: false, volume: 0.7 };
+  }
+}
+function saveAudioSettings({ muted, volume }) {
+  try {
+    localStorage.setItem(AUDIO_KEY, JSON.stringify({ muted, volume }));
+  } catch {
+    /* storage unavailable */
+  }
+}
+const initialAudio = loadAudioSettings();
+
 export const useGameStore = create((set, get) => ({
   // --- connection / session ---
   socketConnected: false,
@@ -29,7 +48,8 @@ export const useGameStore = create((set, get) => ({
   hoveredHex: null,
   actionMode: null, // "claim" | "build" | "attack" | "fortify" | null
   pendingBuildType: null,
-  muted: false,
+  muted: initialAudio.muted,
+  volume: initialAudio.volume,
   helpOpen: false,
 
   setSocketConnected: (connected) => set({ socketConnected: connected }),
@@ -83,7 +103,14 @@ export const useGameStore = create((set, get) => ({
   clearSelection: () => set({ selectedHex: null, actionMode: null, pendingBuildType: null }),
 
   setHelpOpen: (open) => set({ helpOpen: open }),
-  toggleMuted: () => set({ muted: !get().muted }),
+  toggleMuted: () => {
+    set({ muted: !get().muted });
+    saveAudioSettings(get());
+  },
+  setVolume: (volume) => {
+    set({ volume });
+    saveAudioSettings(get());
+  },
 
   resetToMenu: () =>
     set({

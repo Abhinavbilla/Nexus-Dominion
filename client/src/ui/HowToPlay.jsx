@@ -209,7 +209,7 @@ function TipsArt() {
     ["chain", "Protect the link: one captured hex breaks the whole chain."],
     ["fortify", "Fortify the border hexes your enemies are touching."],
     ["dominion", "Watch the leader's bar. Cut their chain before the final round."],
-    ["keyboard", "C B A F pick actions, E ends the turn, Esc cancels."],
+    ["keyboard", "C B A F pick actions, E ends the turn, M mutes sound, Esc cancels."],
   ];
   return (
     <div className="art-tips">
