@@ -36,6 +36,8 @@ export function createMatch({ matchId, mode, playersInput, initialSeed, config }
       socketId: input.socketId,
       reconnectToken: input.reconnectToken,
       connected: true,
+      isAI: Boolean(input.isAI),
+      aiType: input.aiType || null,
       resources: { ...config.STARTING_RESOURCES },
       dominionPoints: 0,
       actionPoints: 0,

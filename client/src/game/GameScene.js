@@ -29,6 +29,8 @@ export default class GameScene extends Phaser.Scene {
 
     this.tweens.add({ targets: this.highlightLayer, alpha: { from: 0.35, to: 1 }, duration: 650, yoyo: true, repeat: -1 });
 
+    this.tweens.add({ targets: this.chainLayer, alpha: { from: 0.65, to: 1 }, duration: 900, yoyo: true, repeat: -1, ease: "Sine.InOut" });
+
     this.input.on("pointerup", (pointer) => {
       if (!this.cameraController.wasClick()) return;
       const worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
@@ -106,6 +108,13 @@ export default class GameScene extends Phaser.Scene {
     drawSelection(this.selectionLayer, x, y, HEX_SIZE);
   }
 
+  _floatText(x, y, text, color) {
+    const label = this.add
+      .text(x, y - 10, text, { fontFamily: "Orbitron, monospace", fontSize: "11px", color: `#${color.toString(16).padStart(6, "0")}` })
+      .setOrigin(0.5);
+    this.tweens.add({ targets: label, y: y - 40, alpha: 0, duration: 900, ease: "Cubic.Out", onComplete: () => label.destroy() });
+  }
+
   // Compares against the previous board snapshot to trigger capture/build
   // feedback (spec.md §67-70) without the server needing to send separate
   // animation commands — the diff itself is the event.
@@ -121,6 +130,8 @@ export default class GameScene extends Phaser.Scene {
         const color = colorForPlayer(this.playersById.get(cell.ownerId));
         this.effects.flash(x, y, HEX_SIZE, color);
         this.effects.burst(x, y, color);
+        if (prev.ownerId) this.effects.shake();
+        this._floatText(x, y, prev.ownerId ? "CAPTURED" : "+1", color);
       } else if (prev.building !== cell.building && cell.building) {
         this.effects.flash(x, y, HEX_SIZE, colorForPlayer(this.playersById.get(cell.ownerId)));
       } else if (prev.fortificationLevel !== cell.fortificationLevel) {

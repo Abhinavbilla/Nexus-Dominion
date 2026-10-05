@@ -1,0 +1,40 @@
+.ai-explain {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ai-explain-title {
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  color: var(--accent, #5eeaff);
+}
+
+.ai-explain-toggle {
+  align-self: flex-start;
+}
+
+.ai-explain-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.ai-explain-table td {
+  padding: 2px 0;
+}
+
+.ai-explain-table td:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.ai-explain-total td {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  font-weight: 700;
+}
+
+.ai-explain-alt {
+  font-size: 0.75rem;
+}

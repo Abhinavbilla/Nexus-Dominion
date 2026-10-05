@@ -21,6 +21,9 @@ export const useGameStore = create((set, get) => ({
   // --- chat (ephemeral, not persisted) ---
   chatMessages: [],
 
+  // --- AI explanations (real heuristic breakdowns, spec.md §52) ---
+  aiExplanations: [],
+
   // --- local UI only ---
   selectedHex: null,
   actionMode: null, // "claim" | "build" | "attack" | "fortify" | null
@@ -47,6 +50,8 @@ export const useGameStore = create((set, get) => ({
 
   pushChatMessage: (message) => set({ chatMessages: [...get().chatMessages, message].slice(-100) }),
 
+  pushAIExplanation: (entry) => set({ aiExplanations: [...get().aiExplanations, entry].slice(-30) }),
+
   setSelectedHex: (hex) => set({ selectedHex: hex }),
   setActionMode: (mode) => set({ actionMode: mode, pendingBuildType: null }),
   setPendingBuildType: (buildingType) => set({ pendingBuildType: buildingType }),
@@ -64,6 +69,7 @@ export const useGameStore = create((set, get) => ({
       gameState: null,
       turnTimeRemaining: null,
       chatMessages: [],
+      aiExplanations: [],
       selectedHex: null,
       actionMode: null,
       pendingBuildType: null,

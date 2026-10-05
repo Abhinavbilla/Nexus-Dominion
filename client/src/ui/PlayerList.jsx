@@ -15,7 +15,7 @@ export default function PlayerList() {
             <span className={`player-dot player-${p.color}`} />
             <div className="player-row-info">
               <span className={`player-row-name ${!p.connected ? "text-faint" : ""}`}>
-                {p.name}
+                {p.name}{p.isAI && " 🤖"}
                 {!p.connected && " (offline)"}
               </span>
               <span className="text-faint player-row-stats">

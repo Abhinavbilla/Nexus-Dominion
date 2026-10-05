@@ -103,3 +103,16 @@
   align-items: center;
   font-size: 0.9rem;
 }
+
+.lobby-ai-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.lobby-ai-remove {
+  margin-left: auto;
+  padding: 2px 8px;
+}

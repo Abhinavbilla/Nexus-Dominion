@@ -9,6 +9,7 @@ import HUD from "./HUD.jsx";
 import ActionBar from "./ActionBar.jsx";
 import BuildMenu from "./BuildMenu.jsx";
 import AttackPreview from "./AttackPreview.jsx";
+import AIExplanation from "./AIExplanation.jsx";
 import EventLog from "./EventLog.jsx";
 import PlayerList from "./PlayerList.jsx";
 import ChatPanel from "./ChatPanel.jsx";
@@ -91,6 +92,7 @@ export default function GameScreen() {
           <ActionBar />
           <BuildMenu />
           <AttackPreview />
+          <AIExplanation />
         </div>
 
         <div className="game-board-wrap">

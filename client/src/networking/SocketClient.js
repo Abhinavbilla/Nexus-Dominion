@@ -1,7 +1,8 @@
 import { io } from "socket.io-client";
 import { useGameStore } from "../state/gameStore.js";
+import { playSfx, playSfxForEvent } from "../audio/AudioManager.js";
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || "http://localhost:3001";
+const SERVER_URL = import.meta.env.VITE_SERVER_URL || (import.meta.env.PROD ? window.location.origin : "http://localhost:3001");
 const SESSION_KEY = "hexdominion_session";
 
 export const socket = io(SERVER_URL, { autoConnect: false });
@@ -66,10 +67,16 @@ export function initSocketClient() {
   socket.on("player_left", ({ players }) => useGameStore.getState().updateLobbyPlayers(players));
 
   socket.on("game_started", ({ gameState }) => useGameStore.getState().applyGameState(gameState));
-  socket.on("action_result", ({ gameState }) => useGameStore.getState().applyGameState(gameState));
+  socket.on("action_result", ({ gameState, event }) => {
+    useGameStore.getState().applyGameState(gameState);
+    playSfxForEvent(event);
+    if (gameState.status === "finished") playSfx("victory");
+  });
   socket.on("state_sync", ({ gameState }) => useGameStore.getState().applyGameState(gameState));
 
   socket.on("timer_tick", ({ turnTimeRemaining }) => useGameStore.getState().setTurnTimeRemaining(turnTimeRemaining));
+
+  socket.on("ai_explanation", (entry) => useGameStore.getState().pushAIExplanation(entry));
 
   socket.on("chat_message", (message) => useGameStore.getState().pushChatMessage(message));
 
@@ -90,6 +97,14 @@ export function joinRoom(roomCode, playerName) {
 
 export function startGame(mode = "normal") {
   socket.emit("start_game", { mode });
+}
+
+export function addAI(aiType) {
+  socket.emit("add_ai", { aiType });
+}
+
+export function removeAI(aiPlayerId) {
+  socket.emit("remove_ai", { aiPlayerId });
 }
 
 export function sendAction(type, params) {

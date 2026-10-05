@@ -1,0 +1,40 @@
+import { generateLegalActions, applyAction, cloneState } from "./actions.js";
+import { resourceTotal } from "./features.js";
+
+// Baseline: maximizes immediate Dominion gain, then immediate resource gain
+// (spec.md §53). Ties resolve to the first action in deterministic order.
+export class GreedyAI {
+  constructor() {
+    this.name = "greedy";
+  }
+
+  chooseAction(state, config, playerId) {
+    const actions = generateLegalActions(state, config, playerId);
+    if (actions.length === 0) return { action: null, explanation: { summary: "No legal actions", total: 0 } };
+
+    const before = state.getPlayer(playerId);
+    let best = null;
+    for (const action of actions) {
+      const trial = cloneState(state);
+      if (!applyAction(trial, config, playerId, action).success) continue;
+      const after = trial.getPlayer(playerId);
+      const dominionGain = after.dominionPoints - before.dominionPoints;
+      const resourceGain = resourceTotal(after) - resourceTotal(before);
+      const score = dominionGain * 1000 + resourceGain;
+      if (!best || score > best.score) best = { action, score, dominionGain, resourceGain };
+    }
+    if (!best || best.score <= 0) return { action: null, explanation: { summary: "No legal actions", total: 0 } };
+
+    return {
+      action: best.action,
+      explanation: {
+        summary: "Highest immediate Dominion/resource gain",
+        total: best.score,
+        features: [
+          { name: "dominionGain", value: best.dominionGain, weight: 1000, contribution: best.dominionGain * 1000 },
+          { name: "resourceGain", value: best.resourceGain, weight: 1, contribution: best.resourceGain },
+        ],
+      },
+    };
+  }
+}

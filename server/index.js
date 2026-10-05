@@ -1,5 +1,5 @@
 import { createServer } from "node:http";
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 import express from "express";
@@ -10,6 +10,7 @@ import { validateGameConfig } from "@hex-dominion/shared/gameConfig.js";
 import { endTurn } from "./GameEngine.js";
 import { processClaim, processBuild, processAttack, processFortify } from "./ActionProcessor.js";
 import { RoomManager } from "./RoomManager.js";
+import { createAIController } from "./AIController.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const rawConfig = JSON.parse(readFileSync(resolve(__dirname, "../gameConfig.json"), "utf-8"));
@@ -19,14 +20,22 @@ const app = express();
 app.use(cors());
 app.get("/health", (_req, res) => res.json({ status: "ok" }));
 
+// Production: serve the built client from the same origin (npm run build).
+const clientDist = resolve(__dirname, "../client/dist");
+if (existsSync(clientDist)) {
+  app.use(express.static(clientDist));
+  app.get("*", (_req, res) => res.sendFile(resolve(clientDist, "index.html")));
+}
+
 const httpServer = createServer(app);
 const io = new Server(httpServer, { cors: { origin: "*" } });
 
 const roomManager = new RoomManager(baseConfig);
 const roomTimers = new Map();
+const aiController = createAIController({ io, broadcastStateUpdate, stopTurnTimer });
 
 function lobbyPlayersPublic(room) {
-  return room.lobbyPlayers.map(({ id, name, connected }) => ({ id, name, connected }));
+  return room.lobbyPlayers.map(({ id, name, connected, isAI, aiType }) => ({ id, name, connected, isAI: Boolean(isAI), aiType: aiType || null }));
 }
 
 function getPlayerName(room, playerId) {
@@ -36,6 +45,7 @@ function getPlayerName(room, playerId) {
 
 function broadcastStateUpdate(room, event) {
   io.to(room.code).emit("action_result", { success: true, gameState: room.state.toWireFormat(), event });
+  aiController.maybeRun(room);
 }
 
 function startTurnTimer(room) {
@@ -107,6 +117,18 @@ io.on("connection", (socket) => {
     io.to(result.room.code).emit("player_joined", { players: lobbyPlayersPublic(result.room) });
   });
 
+  socket.on("add_ai", ({ aiType } = {}) => {
+    const result = roomManager.addAI({ roomCode: socket.data.roomCode, requestingPlayerId: socket.data.playerId, aiType });
+    if (result.error) return socket.emit("error", { code: "ADD_AI_FAILED", message: result.error });
+    io.to(result.room.code).emit("player_joined", { players: lobbyPlayersPublic(result.room) });
+  });
+
+  socket.on("remove_ai", ({ aiPlayerId } = {}) => {
+    const result = roomManager.removeAI({ roomCode: socket.data.roomCode, requestingPlayerId: socket.data.playerId, aiPlayerId });
+    if (result.error) return socket.emit("error", { code: "REMOVE_AI_FAILED", message: result.error });
+    io.to(result.room.code).emit("player_left", { players: lobbyPlayersPublic(result.room) });
+  });
+
   socket.on("start_game", ({ mode } = {}) => {
     const roomCode = socket.data.roomCode;
     const result = roomManager.startGame({ roomCode, requestingPlayerId: socket.data.playerId, mode });
@@ -114,6 +136,7 @@ io.on("connection", (socket) => {
 
     startTurnTimer(result.room);
     io.to(roomCode).emit("game_started", { gameState: result.room.state.toWireFormat() });
+    aiController.maybeRun(result.room);
   });
 
   socket.on("action", ({ type, params } = {}) => {

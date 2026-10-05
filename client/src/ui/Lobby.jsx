@@ -1,5 +1,5 @@
 import { useGameStore } from "../state/gameStore.js";
-import { startGame, leaveRoom } from "../networking/SocketClient.js";
+import { startGame, leaveRoom, addAI, removeAI } from "../networking/SocketClient.js";
 import "./Lobby.css";
 
 const PLAYER_COLORS = ["cyan", "orange", "violet", "lime"];
@@ -32,12 +32,28 @@ export default function Lobby() {
               <span className={`lobby-slot-dot player-${PLAYER_COLORS[i]}`} />
               <div className="lobby-slot-info">
                 <span className="lobby-slot-name">{player ? player.name : "Waiting for commander..."}</span>
-                {player && <span className="lobby-slot-status text-faint">{player.connected ? "Connected" : "Disconnected"}</span>}
+                {player && <span className="lobby-slot-status text-faint">{player.isAI ? "AI opponent" : player.connected ? "Connected" : "Disconnected"}</span>}
               </div>
               {player?.id === playerId && <span className="lobby-slot-you">YOU</span>}
+              {player?.isAI && isHost && (
+                <button className="btn btn-danger lobby-ai-remove" onClick={() => removeAI(player.id)}>
+                  ×
+                </button>
+              )}
             </div>
           ))}
         </div>
+
+        {isHost && players.length < MAX_PLAYERS && (
+          <div className="lobby-ai-row">
+            <span className="text-dim">ADD AI:</span>
+            {["random", "greedy", "strategic"].map((type) => (
+              <button className="btn" key={type} onClick={() => addAI(type)}>
+                {type}
+              </button>
+            ))}
+          </div>
+        )}
 
         <div className="lobby-actions">
           {isHost ? (

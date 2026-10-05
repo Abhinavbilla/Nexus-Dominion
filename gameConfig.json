@@ -112,6 +112,8 @@
     "defensiveValue": 2,
     "threatProximity": 1,
     "expansionValue": 1,
-    "resourceCost": -1
+    "denyLeader": 3,
+    "captureSwing": 2,
+    "resourceCost": -0.25
   }
 }
