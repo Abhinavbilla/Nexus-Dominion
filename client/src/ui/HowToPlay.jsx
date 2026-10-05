@@ -213,11 +213,9 @@ function TipsArt() {
   ];
   return (
     <div className="art-tips">
-      {tips.map(([icon, text]) => (
-        <div className="art-tip" key={icon}>
-          <span>
-            <Icon name={icon} size={22} color="var(--gold)" />
-          </span>
+      {tips.map(([, text], i) => (
+        <div className="art-tip" key={text}>
+          <span className="font-title">{String(i + 1).padStart(2, "0")}</span>
           <p>{text}</p>
         </div>
       ))}
@@ -334,9 +332,6 @@ export function GuideContent({ onClose, compact = false }) {
       <nav className="guide-nav" aria-label="Guide sections">
         {PAGES.map((p, i) => (
           <button key={p.id} className={`guide-tab ${i === index ? "guide-tab-active" : ""} ${i < index ? "guide-tab-done" : ""}`} onClick={() => setIndex(i)}>
-            <span className="guide-tab-icon">
-              <Icon name={p.icon} size={20} />
-            </span>
             <span className="guide-tab-label">{p.title}</span>
           </button>
         ))}
@@ -345,18 +340,13 @@ export function GuideContent({ onClose, compact = false }) {
       <section className={`guide-page ${page.wide ? "guide-page-wide" : ""}`} key={page.id}>
         <div className="guide-art">{page.art}</div>
         <div className="guide-text">
-          <span className="guide-step mono">
-            {index + 1} / {PAGES.length}
-          </span>
           <h3 className="guide-title font-title">{page.title}</h3>
           <p className="guide-lead">{page.lead}</p>
           {page.points.length > 0 && (
             <ul className="guide-points">
-              {page.points.map(([icon, text]) => (
+              {page.points.map(([, text]) => (
                 <li key={text}>
-                  <span className="guide-point-icon">
-                    <Icon name={icon} size={18} color="var(--gold)" />
-                  </span>
+                  <span className="guide-point-dot" />
                   <span>{text}</span>
                 </li>
               ))}
@@ -364,7 +354,7 @@ export function GuideContent({ onClose, compact = false }) {
           )}
           {page.tip && (
             <div className="guide-tip">
-              <Icon name="bulb" size={18} color="var(--gold-bright)" />
+              <b>TIP</b>
               <p>{page.tip}</p>
             </div>
           )}
@@ -404,7 +394,7 @@ export default function HowToPlay({ onBack }) {
           <div className="howto-header">
             <h2 className="font-title">HOW TO PLAY</h2>
             <button className="btn" onClick={onBack}>
-              <Icon name="close" size={16} /> Close
+              Close
             </button>
           </div>
           <GuideContent onClose={onBack} />

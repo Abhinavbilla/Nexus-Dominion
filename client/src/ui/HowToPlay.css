@@ -65,17 +65,6 @@
   color: var(--text);
 }
 
-.guide-tab-icon {
-  width: 32px;
-  height: 32px;
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
-  border-radius: 9px;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid var(--line);
-}
-
 .guide-tab-label {
   font-family: var(--font-display);
   font-size: 0.95rem;
@@ -88,15 +77,6 @@
   color: var(--gold-bright);
   border-color: rgba(233, 180, 76, 0.5);
   background: linear-gradient(90deg, rgba(233, 180, 76, 0.16), rgba(233, 180, 76, 0.03));
-}
-
-.guide-tab-active .guide-tab-icon {
-  border-color: var(--gold);
-  color: var(--gold-bright);
-}
-
-.guide-tab-done .guide-tab-icon {
-  color: var(--text-dim);
 }
 
 .guide-page {
@@ -131,12 +111,6 @@
   overflow: hidden;
 }
 
-.guide-step {
-  font-size: 0.72rem;
-  color: var(--text-faint);
-  letter-spacing: 0.2em;
-}
-
 .guide-title {
   font-size: 1.7rem;
   letter-spacing: 0.1em;
@@ -169,26 +143,31 @@
   color: var(--text-dim);
 }
 
-.guide-point-icon {
-  width: 30px;
-  height: 30px;
+.guide-point-dot {
+  width: 8px;
+  height: 8px;
   flex-shrink: 0;
-  display: grid;
-  place-items: center;
-  border-radius: 8px;
-  background: rgba(233, 180, 76, 0.1);
-  border: 1px solid rgba(233, 180, 76, 0.28);
+  margin-top: 0.5em;
+  background: var(--gold);
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
 }
 
 .guide-tip {
   display: flex;
-  gap: 0.6rem;
-  align-items: flex-start;
+  gap: 0.7rem;
+  align-items: baseline;
   margin-top: auto;
   padding: 0.65rem 0.8rem;
-  border-radius: var(--radius-md);
-  background: rgba(233, 180, 76, 0.09);
-  border: 1px solid rgba(233, 180, 76, 0.3);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  background: rgba(233, 180, 76, 0.07);
+  border-left: 3px solid var(--gold);
+}
+
+.guide-tip b {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  color: var(--gold);
 }
 
 .guide-tip p {
@@ -573,13 +552,9 @@
 }
 
 .art-tip span {
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  border-radius: 10px;
-  background: rgba(233, 180, 76, 0.1);
-  border: 1px solid rgba(233, 180, 76, 0.3);
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--gold);
 }
 
 .art-tip p {

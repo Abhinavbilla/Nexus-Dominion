@@ -53,6 +53,13 @@
   text-overflow: ellipsis;
 }
 
+.pcard-lead {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  color: var(--gold);
+}
+
 .pcard-you {
   margin-left: 0.4rem;
   font-size: 0.6rem;

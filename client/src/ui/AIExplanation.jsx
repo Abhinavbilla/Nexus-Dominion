@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useGameStore } from "../state/gameStore.js";
-import Icon from "./Icon.jsx";
 import { PlayerEmblem } from "./bits.jsx";
 import "./AIExplanation.css";
 
@@ -37,13 +36,13 @@ export default function AIExplanation() {
   return (
     <>
       <div className="ai-card glass-panel">
-        <PlayerEmblem color={aiPlayer?.color} ai size={32} />
+        <PlayerEmblem color={aiPlayer?.color} name={aiPlayer?.name} ai size={32} />
         <div className="ai-card-text">
           <b className={`player-${aiPlayer?.color}`}>{aiPlayer?.name}</b>
           <span>{explanation.summary}</span>
         </div>
         <button className="btn ai-card-btn" onClick={() => setOpen(true)}>
-          <Icon name="info" size={15} /> Why?
+          Why?
         </button>
       </div>
 
@@ -53,10 +52,10 @@ export default function AIExplanation() {
             <div className="ai-modal-panel glass-panel fade-in-up" onClick={(e) => e.stopPropagation()}>
               <div className="ai-modal-head">
                 <h3 className="panel-title">
-                  <Icon name="bot" size={16} /> WHY THIS MOVE?
+                  WHY THIS MOVE?
                 </h3>
                 <button className="btn btn-ghost" onClick={() => setOpen(false)}>
-                  <Icon name="close" size={16} /> Close
+                  Close
                 </button>
               </div>
               <div className="ai-explain-line">

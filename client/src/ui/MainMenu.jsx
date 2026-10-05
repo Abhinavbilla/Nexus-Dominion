@@ -4,7 +4,6 @@ import { createRoom, joinRoom } from "../networking/SocketClient.js";
 import Backdrop from "./Backdrop.jsx";
 import Logo from "./Logo.jsx";
 import HeroTiles from "./HeroTiles.jsx";
-import Icon from "./Icon.jsx";
 import HowToPlay from "./HowToPlay.jsx";
 import "./MainMenu.css";
 
@@ -44,13 +43,13 @@ export default function MainMenu() {
               <input id="cmd-name" className="menu-input" value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter your name" maxLength={16} />
               <div className="menu-actions">
                 <button className="btn btn-primary menu-cta" onClick={() => setMode("create")}>
-                  <Icon name="plus" size={16} /> Create Room
+                  Create Room
                 </button>
                 <button className="btn" onClick={() => setMode("join")}>
-                  <Icon name="swap" size={16} /> Join Room
+                  Join Room
                 </button>
                 <button className="btn btn-ghost" onClick={() => setMode("howto")}>
-                  <Icon name="info" size={16} /> How To Play
+                  How To Play
                 </button>
               </div>
             </div>
@@ -89,10 +88,9 @@ export default function MainMenu() {
 
           {error && (
             <div className="menu-error">
-              <Icon name="info" size={16} />
               <span>{error}</span>
               <button className="menu-error-dismiss" onClick={clearError} aria-label="Dismiss">
-                <Icon name="close" size={14} />
+                Dismiss
               </button>
             </div>
           )}

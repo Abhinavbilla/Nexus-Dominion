@@ -3,7 +3,6 @@ import { useGameStore } from "../state/gameStore.js";
 import { startGame, leaveRoom, addAI, removeAI } from "../networking/SocketClient.js";
 import Backdrop from "./Backdrop.jsx";
 import Logo from "./Logo.jsx";
-import Icon from "./Icon.jsx";
 import { PlayerEmblem } from "./bits.jsx";
 import { PLAYER_COLOR_NAME } from "../game/playerColors.js";
 import "./Lobby.css";
@@ -58,7 +57,7 @@ export default function Lobby() {
           <div className="lobby-slots">
             {slots.map((player, i) => (
               <div className={`lobby-slot ${player ? "lobby-slot-filled" : ""}`} key={i} style={{ "--pc": `var(--player-${PLAYER_COLORS[i]})` }}>
-                {player ? <PlayerEmblem color={PLAYER_COLORS[i]} ai={player.isAI} size={42} active /> : <span className="lobby-slot-empty-emblem" />}
+                {player ? <PlayerEmblem color={PLAYER_COLORS[i]} name={player.name} ai={player.isAI} size={42} active /> : <span className="lobby-slot-empty-emblem" />}
                 <div className="lobby-slot-info">
                   <span className="lobby-slot-name">{player ? player.name : "Open seat"}</span>
                   <span className="lobby-slot-status">
@@ -66,10 +65,10 @@ export default function Lobby() {
                   </span>
                 </div>
                 {player?.id === playerId && <span className="lobby-slot-you">YOU</span>}
-                {i === 0 && <Icon name="crown" size={16} color="var(--gold)" title="Host" />}
+                {i === 0 && <span className="lobby-slot-host">HOST</span>}
                 {player?.isAI && isHost && (
                   <button className="lobby-ai-remove" onClick={() => removeAI(player.id)} aria-label="Remove AI">
-                    <Icon name="close" size={14} />
+                    Remove
                   </button>
                 )}
               </div>
@@ -78,9 +77,7 @@ export default function Lobby() {
 
           {isHost && players.length < MAX_PLAYERS && (
             <div className="lobby-ai">
-              <span className="lobby-ai-title">
-                <Icon name="bot" size={14} /> ADD AI OPPONENT
-              </span>
+              <span className="lobby-ai-title">ADD AI OPPONENT</span>
               <div className="lobby-ai-grid">
                 {AI_TYPES.map((a) => (
                   <button className="lobby-ai-card" key={a.type} onClick={() => addAI(a.type)}>
@@ -108,10 +105,9 @@ export default function Lobby() {
 
           {error && (
             <div className="menu-error">
-              <Icon name="info" size={16} />
               <span>{error}</span>
               <button className="menu-error-dismiss" onClick={clearError} aria-label="Dismiss">
-                <Icon name="close" size={14} />
+                Dismiss
               </button>
             </div>
           )}

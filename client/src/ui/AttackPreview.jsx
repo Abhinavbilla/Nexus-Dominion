@@ -89,7 +89,6 @@ export default function AttackPreview() {
       </div>
 
       <div className={`atk-verdict ${success ? "atk-verdict-win" : "atk-verdict-lose"}`}>
-        <Icon name={success ? "crown" : "fortify"} size={18} />
         {success ? "SUCCESS — you capture the hex" : "FAILED — the defense holds"}
       </div>
 

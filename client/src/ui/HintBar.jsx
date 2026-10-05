@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useGameStore, getMyPlayer, isMyTurn } from "../state/gameStore.js";
 import { rulesOf } from "./rules.js";
-import Icon from "./Icon.jsx";
 import "./HintBar.css";
 
 const COACH_KEY = "hexdominion_coach";
@@ -79,9 +78,7 @@ export default function HintBar() {
   return (
     <div className={`hintbar hintbar-${primary.tone}`}>
       <div className="hintbar-main">
-        <span className="hintbar-icon">
-          <Icon name={primary.icon} size={22} />
-        </span>
+        <span className="hintbar-bar" />
         <div className="hintbar-text">
           <b>{primary.title}</b>
           <span>{primary.text}</span>
@@ -90,16 +87,15 @@ export default function HintBar() {
       {goal && (
         <div className="hintbar-coach" title="Guided tips for new players">
           <span className="hintbar-coach-label">
-            <Icon name="bulb" size={14} color="var(--gold-bright)" /> TIP {goalIndex + 1}/{goals.length}
+            TIP
           </span>
           <span className="hintbar-coach-text">{goal.text}</span>
           <button className="hintbar-x" onClick={dismissCoach} aria-label="Hide tips" title="Hide tips">
-            <Icon name="close" size={13} />
+            ×
           </button>
         </div>
       )}
       <button className="hintbar-help" onClick={() => setHelpOpen(true)} title="How to play (H)">
-        <Icon name="help" size={18} />
         <span>Rules</span>
       </button>
     </div>

@@ -89,7 +89,7 @@ export default function VictoryScreen() {
 
           {!isDraw && (
             <div className="victory-winner-block">
-              <PlayerEmblem color={winner.color} ai={winner.isAI} size={52} active />
+              <PlayerEmblem color={winner.color} name={winner.name} ai={winner.isAI} size={52} active />
               <div>
                 <span className="text-faint victory-label">WINNER</span>
                 <h2 className={`victory-winner player-${winner.color}`}>{winner.name}</h2>

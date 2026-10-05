@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useGameStore } from "../state/gameStore.js";
 import { GuideContent } from "./HowToPlay.jsx";
-import Icon from "./Icon.jsx";
 import "./HelpModal.css";
 
 // The full illustrated guide, available mid-game without leaving the board (H or ?).
@@ -28,7 +27,7 @@ export default function HelpModal() {
         <div className="help-modal-head">
           <h2 className="font-title">HOW TO PLAY</h2>
           <button className="btn btn-ghost" onClick={() => setOpen(false)}>
-            <Icon name="close" size={16} /> Close
+            Close
           </button>
         </div>
         <GuideContent onClose={() => setOpen(false)} compact />

@@ -22,14 +22,14 @@ export default function PlayerList() {
         const territory = gameState.board.filter((c) => c.ownerId === p.id).length;
         return (
           <div className={`pcard ${isCurrent ? "pcard-active" : ""} ${!p.connected ? "pcard-offline" : ""}`} key={p.id} style={{ "--pc": `var(--player-${p.color})` }}>
-            <PlayerEmblem color={p.color} ai={p.isAI} size={40} active={isCurrent} />
+            <PlayerEmblem color={p.color} name={p.name} ai={p.isAI} size={40} active={isCurrent} />
             <div className="pcard-main">
               <div className="pcard-top">
                 <span className="pcard-name">
                   {p.name}
                   {p.id === myId && <span className="pcard-you">YOU</span>}
                 </span>
-                {p.id === leaderId && <Icon name="crown" size={15} color="var(--gold)" title="Leading" />}
+                {p.id === leaderId && <span className="pcard-lead">LEADING</span>}
               </div>
               <div className="pcard-sub">
                 {PLAYER_COLOR_NAME[p.color]}

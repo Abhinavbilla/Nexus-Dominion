@@ -55,7 +55,7 @@ export function ResourceChip({ kind, value }) {
 }
 
 // Hexagonal player badge in the player's color, with a crown (human) or robot (AI) glyph.
-export function PlayerEmblem({ color, size = 36, ai = false, active = false }) {
+export function PlayerEmblem({ color, name = "", size = 36, ai = false, active = false }) {
   const css = PLAYER_COLOR_CSS[color] || "#999";
   const id = `emb-${color}-${size}`;
   return (
@@ -68,9 +68,9 @@ export function PlayerEmblem({ color, size = 36, ai = false, active = false }) {
       </defs>
       <path d="M20 2.5 35.5 11v18L20 37.5 4.5 29V11z" fill={`url(#${id})`} stroke="rgba(255,255,255,0.55)" strokeWidth="1.4" strokeLinejoin="round" />
       <path d="M20 6 32.5 13v14L20 34 7.5 27V13z" fill="rgba(5,8,15,0.55)" />
-      <g transform="translate(10 10) scale(0.83)" style={{ color: "#fff" }}>
-        <Icon name={ai ? "bot" : "crown"} size={24} color="#fff" />
-      </g>
+      <text x="20" y="25.5" textAnchor="middle" fill="#fff" fontFamily="Cinzel, serif" fontWeight="800" fontSize={ai ? 13 : 17}>
+        {ai ? "AI" : (name.trim()[0] || "?").toUpperCase()}
+      </text>
     </svg>
   );
 }

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useGameStore } from "../state/gameStore.js";
 import { sendChatMessage } from "../networking/SocketClient.js";
-import Icon from "./Icon.jsx";
 import "./ChatPanel.css";
 
 export default function ChatPanel() {
@@ -39,7 +38,7 @@ export default function ChatPanel() {
       <form className="chat-input-row" onSubmit={handleSubmit}>
         <input className="chat-input" value={text} onChange={(e) => setText(e.target.value)} placeholder="Message commanders…" maxLength={300} />
         <button className="btn chat-send" type="submit" aria-label="Send">
-          <Icon name="chat" size={16} />
+          Send
         </button>
       </form>
     </div>

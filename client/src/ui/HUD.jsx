@@ -69,7 +69,7 @@ export default function HUD() {
       </div>
 
       <div className={`hud-turn ${myTurn ? "hud-turn-mine" : ""}`}>
-        <PlayerEmblem color={current?.color} ai={current?.isAI} size={38} active />
+        <PlayerEmblem color={current?.color} name={current?.name} ai={current?.isAI} size={38} active />
         <div className="hud-turn-text">
           <span className="hud-label">{myTurn ? "YOUR TURN" : "TURN"}</span>
           <span className={`hud-turn-name player-${current?.color}`}>{current?.name}</span>
@@ -79,7 +79,6 @@ export default function HUD() {
 
       {gameState.thresholdReached && (
         <div className="hud-final">
-          <Icon name="crown" size={16} color="var(--gold-bright)" />
           <span>FINAL ROUND</span>
         </div>
       )}
@@ -93,9 +92,7 @@ export default function HUD() {
       </div>
 
       <div className="hud-block hud-dominion" title={`Dominion Points — first to ${rules.victoryScore} triggers the final round`}>
-        <span className="hud-label">
-          <Icon name="dominion" size={13} color="var(--gold)" /> DOMINION
-        </span>
+        <span className="hud-label">DOMINION</span>
         <span className="hud-big mono" style={{ color: "var(--gold-bright)" }}>
           {me.dominionPoints}
           <span className="hud-dim">/{rules.victoryScore}</span>
