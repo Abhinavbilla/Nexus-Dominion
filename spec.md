@@ -144,7 +144,7 @@ Turn-based multiplayer.
 ## Match duration
 
 Normal mode:
-- Maximum 15 rounds.
+- Maximum 18 rounds.
 - 25-second turn timer.
 - 2 Action Points per player turn.
 
@@ -1183,7 +1183,7 @@ restores immediate victory.
 
 If no player reaches the threshold:
 
-The game ends after Round 15.
+The game ends after Round 18.
 
 The player with the highest Dominion Points wins.
 
@@ -1572,7 +1572,7 @@ The project must contain a configurable Demo Mode.
 
 Normal:
 
-MAX_ROUNDS = 15
+MAX_ROUNDS = 18
 TURN_DURATION = 25 seconds
 VICTORY_SCORE = 40
 
