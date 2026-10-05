@@ -81,10 +81,10 @@ export function renderPlinth(hexSize, boardRadius) {
   const scale = 2;
   const K = Math.sqrt(3) / 2; // regular flat-top hexagon: height = R * sqrt(3)
   const R = (hexSize * Math.sqrt(3) * boardRadius + hexSize * 1.25) * scale; // top tier radius
-  const STEPS = [1.25, 1.17, 1.09]; // ledge radii (outer -> inner) as multiples of R
+  const STEPS = [1.16, 1.105, 1.052]; // ledge radii (outer -> inner) as multiples of R
   const levels = STEPS.length;
-  const H = hexSize * 0.36 * scale; // height of one step
-  const D = hexSize * 0.5 * scale; // base wall under the whole structure
+  const H = hexSize * 0.32 * scale; // height of one step
+  const D = hexSize * 0.3 * scale; // base wall under the whole structure
   const pad = hexSize * 2.2 * scale;
   const Rmax = R * STEPS[0];
   const W = Math.ceil(Rmax * 2 + pad * 2);
@@ -245,8 +245,8 @@ export function renderPlinth(hexSize, boardRadius) {
     W,
     H: Ht,
     // extents used to frame the whole structure, steps included, in the camera
-    fitW: (2 * Rmax) / scale + hexSize * 0.6,
-    fitH: (2 * Rmax * K + D + (levels + 1) * H) / scale + hexSize * 0.6,
+    fitW: (2 * Rmax) / scale + hexSize * 0.25,
+    fitH: (2 * Rmax * K + D + (levels + 1) * H) / scale + hexSize * 0.25,
     // the steps and base wall hang below the board centre, so the camera centres a bit lower
     dropY: ((levels + 1) * H + D) / scale,
   };
