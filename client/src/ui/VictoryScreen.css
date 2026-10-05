@@ -61,3 +61,23 @@
   font-weight: 700;
   text-align: left;
 }
+
+.victory-outcome {
+  font-size: 1.6rem;
+  letter-spacing: 0.25em;
+  margin: 0.4rem 0 0.8rem;
+}
+
+.victory-outcome-won {
+  color: var(--color-accent);
+  text-shadow: var(--glow-md);
+}
+
+.victory-outcome-lost {
+  color: #ff5470;
+  text-shadow: 0 0 14px rgba(255, 84, 112, 0.6);
+}
+
+.victory-outcome-draw {
+  color: var(--color-text-dim);
+}

@@ -4,16 +4,20 @@ import "./VictoryScreen.css";
 
 export default function VictoryScreen() {
   const gameState = useGameStore((s) => s.gameState);
+  const playerId = useGameStore((s) => s.playerId);
   if (!gameState) return null;
 
   const winner = gameState.players.find((p) => p.id === gameState.winnerId);
   const isDraw = !winner;
+  const outcome = isDraw ? "draw" : winner.id === playerId ? "won" : "lost";
+  const OUTCOME_TEXT = { won: "YOU WON", lost: "YOU LOST", draw: "IT'S A DRAW" };
 
   return (
     <div className="victory-root">
       <div className="scanline-backdrop" />
       <div className="victory-panel glass-panel fade-in-up">
         <h1 className="font-display victory-game-title">NEXUS: DOMINION</h1>
+        <div className={`font-display victory-outcome victory-outcome-${outcome}`}>{OUTCOME_TEXT[outcome]}</div>
         {isDraw ? (
           <h2 className="font-display victory-winner">DRAW</h2>
         ) : (
