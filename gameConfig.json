@@ -3,7 +3,7 @@
     "normal": {
       "MAX_ROUNDS": 15,
       "TURN_DURATION_SECONDS": 25,
-      "VICTORY_SCORE": 30
+      "VICTORY_SCORE": 40
     },
     "demo": {
       "MAX_ROUNDS": 8,

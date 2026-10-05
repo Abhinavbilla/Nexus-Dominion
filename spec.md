@@ -1169,7 +1169,7 @@ the threshold has been reached.
 
 Default threshold:
 
-30 Dominion Points.
+40 Dominion Points.
 
 Rationale: if the match ended the instant a threshold was reached, whoever moved
 first in the deciding round would have a systematic advantage. Simulation
@@ -1574,7 +1574,7 @@ Normal:
 
 MAX_ROUNDS = 15
 TURN_DURATION = 25 seconds
-VICTORY_SCORE = 30
+VICTORY_SCORE = 40
 
 Demo:
 

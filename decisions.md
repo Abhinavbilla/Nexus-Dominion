@@ -59,7 +59,7 @@
 
 ## Decision 5: Victory Check Timing ✅ KEEP
 
-**Rule**: Victory is checked immediately after every action that awards Dominion Points. If a player reaches the victory threshold (default 30), the game ends instantly. No further actions are taken.
+**Rule**: Victory is checked after every action that awards Dominion Points. If a player reaches the victory threshold (default 40), the match is flagged and ends when the current round completes (see Fairness amendment below). Superseded: originally the game ended instantly.
 
 **Status**: Approved as proposed.
 
