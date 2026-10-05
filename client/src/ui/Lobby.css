@@ -1,10 +1,15 @@
 .lobby-wrap {
   height: 100%;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  place-items: center;
+  display: flex;
   padding: 1rem;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* margin:auto centres the panel when there is room and lets it start at the top (and scroll) when
+   there is not; grid/flex centring would cut off the top of a panel taller than the screen. */
+.lobby-wrap > .lobby-panel {
+  margin: auto;
 }
 
 .lobby-panel {
@@ -207,6 +212,21 @@
   font-size: 0.74rem;
   color: var(--text-dim);
   line-height: 1.25;
+}
+
+.lobby-ready {
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.12rem 0.5rem;
+  border: 1px solid var(--line-strong);
+  color: var(--text-faint);
+}
+
+.lobby-ready-on {
+  color: var(--success);
+  border-color: var(--success);
 }
 
 .lobby-presence {

@@ -1,14 +1,21 @@
 .howto-wrap {
   height: 100%;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  place-items: center;
+  display: flex;
   padding: 1.2rem;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* margin:auto centres the panel when there is room and lets it start at the top (and scroll) when
+   there is not; grid/flex centring would cut off the top of a panel taller than the screen. */
+.howto-wrap > .howto-panel {
+  margin: auto;
 }
 
 .howto-panel {
   width: min(1060px, 100%);
   height: min(640px, calc(100vh - 2.4rem));
+  height: min(640px, calc(100dvh - 2.4rem));
   display: flex;
   flex-direction: column;
   padding: 1.1rem 1.4rem 0.9rem;
@@ -568,6 +575,7 @@
 @media (max-width: 860px) {
   .howto-panel {
     height: calc(100vh - 2rem);
+    height: calc(100dvh - 2rem);
   }
 
   .guide {
@@ -598,6 +606,15 @@
 
   .guide-art {
     max-height: 230px;
+  }
+
+  .guide-text {
+    overflow: visible;
+    min-height: auto;
+  }
+
+  .guide-tip {
+    margin-top: 0.5rem;
   }
 
   .art-tips {

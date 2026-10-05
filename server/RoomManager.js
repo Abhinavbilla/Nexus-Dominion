@@ -21,7 +21,7 @@ export class RoomManager {
     const room = {
       code,
       hostPlayerId: playerId,
-      lobbyPlayers: [{ id: playerId, name: hostName, socketId, reconnectToken, connected: true }],
+      lobbyPlayers: [{ id: playerId, name: hostName, socketId, reconnectToken, connected: true, ready: true }],
       state: null,
       config: null,
     };
@@ -38,7 +38,7 @@ export class RoomManager {
     }
     const playerId = randomUUID();
     const reconnectToken = randomUUID();
-    room.lobbyPlayers.push({ id: playerId, name: playerName, socketId, reconnectToken, connected: true });
+    room.lobbyPlayers.push({ id: playerId, name: playerName, socketId, reconnectToken, connected: true, ready: false });
     return { room, playerId, reconnectToken };
   }
 
@@ -66,6 +66,15 @@ export class RoomManager {
       isAI: true,
       aiType,
     });
+    return { room };
+  }
+
+  setReady({ roomCode, playerId, ready }) {
+    const room = this.rooms.get(roomCode);
+    if (!room || room.state) return { error: "Ready can only be changed in the lobby" };
+    const player = room.lobbyPlayers.find((p) => p.id === playerId);
+    if (!player || player.isAI) return { error: "Player not found" };
+    player.ready = Boolean(ready);
     return { room };
   }
 
@@ -106,6 +115,7 @@ export class RoomManager {
       connected: p.connected,
       isAI: Boolean(p.isAI),
       aiType: p.aiType || null,
+      ready: false, // everyone re-confirms before the next match
     }));
     room.state = null;
     room.config = null;
@@ -126,6 +136,9 @@ export class RoomManager {
     if (room.lobbyPlayers.length < 2) return { error: "Need at least 2 players" };
     const absent = room.lobbyPlayers.filter((p) => !p.isAI && !p.connected);
     if (absent.length) return { error: `Waiting for ${absent.map((p) => p.name).join(", ")} — remove them or wait` };
+    // Everyone except the host (who starts the match) and the AIs must have pressed Ready.
+    const notReady = room.lobbyPlayers.filter((p) => !p.isAI && p.id !== room.hostPlayerId && !p.ready);
+    if (notReady.length) return { error: `Waiting for ${notReady.map((p) => p.name).join(", ")} to be ready` };
 
     const config = resolveModeConfig(this.baseConfig, mode || "normal", room.lobbyPlayers.length);
     const matchId = randomUUID();
@@ -169,7 +182,10 @@ export class RoomManager {
     const room = this.findRoomByPlayerId(playerId);
     if (!room) return null;
     const player = room.state ? room.state.getPlayer(playerId) : room.lobbyPlayers.find((p) => p.id === playerId);
-    if (player) player.connected = false;
+    if (player) {
+      player.connected = false;
+      if (!room.state) player.ready = false; // coming back to the lobby means getting ready again
+    }
     return room;
   }
 

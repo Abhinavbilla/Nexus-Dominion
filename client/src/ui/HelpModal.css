@@ -13,6 +13,7 @@
 .help-modal-panel {
   width: min(1060px, 100%);
   height: min(620px, calc(100vh - 2rem));
+  height: min(620px, calc(100dvh - 2rem));
   padding: 1rem 1.3rem 0.8rem;
   display: flex;
   flex-direction: column;

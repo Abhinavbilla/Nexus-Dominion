@@ -35,13 +35,15 @@ const roomTimers = new Map();
 const aiController = createAIController({ io, broadcastStateUpdate, stopTurnTimer });
 
 function lobbyPlayersPublic(room) {
-  return room.lobbyPlayers.map(({ id, name, connected, isAI, aiType }) => ({
+  return room.lobbyPlayers.map(({ id, name, connected, isAI, aiType, ready }) => ({
     id,
     name,
     connected,
     isAI: Boolean(isAI),
     aiType: aiType || null,
     isHost: id === room.hostPlayerId,
+    // the host starts the match and AIs never wait, so both count as ready
+    ready: Boolean(isAI) || id === room.hostPlayerId || Boolean(ready),
   }));
 }
 
@@ -177,6 +179,12 @@ io.on("connection", (socket) => {
   socket.on("add_ai", ({ aiType } = {}) => {
     const result = roomManager.addAI({ roomCode: socket.data.roomCode, requestingPlayerId: socket.data.playerId, aiType });
     if (result.error) return socket.emit("error", { code: "ADD_AI_FAILED", message: result.error });
+    io.to(result.room.code).emit("player_joined", { players: lobbyPlayersPublic(result.room) });
+  });
+
+  socket.on("set_ready", ({ ready } = {}) => {
+    const result = roomManager.setReady({ roomCode: socket.data.roomCode, playerId: socket.data.playerId, ready });
+    if (result.error) return socket.emit("error", { code: "READY_FAILED", message: result.error });
     io.to(result.room.code).emit("player_joined", { players: lobbyPlayersPublic(result.room) });
   });
 

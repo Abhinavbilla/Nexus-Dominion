@@ -4,6 +4,7 @@
 }
 
 .phaser-container canvas {
+  touch-action: none; /* taps and drags on the board go to the game, not to page scrolling */
   display: block;
   border-radius: var(--radius-lg);
 }

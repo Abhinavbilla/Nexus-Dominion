@@ -4,6 +4,7 @@
 .game-root {
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   box-sizing: border-box;
   overflow: hidden;
   display: flex;
@@ -59,10 +60,18 @@
 
 @media (max-width: 900px) {
   /* Narrow screens: one scrolling column with a fixed-height board. */
+  /* The page itself never scrolls (body is locked), so the game screen must be a fixed-height
+     scroll container; otherwise everything below the fold is unreachable on phones. */
   .game-root {
-    height: auto;
-    min-height: 100vh;
+    height: 100vh;
+    height: 100dvh;
     overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .game-root > * {
+    flex-shrink: 0;
   }
 
   .game-middle {
@@ -77,6 +86,7 @@
   .game-board-wrap {
     flex: none;
     height: 62vh;
+    height: 62dvh;
     min-height: 340px;
   }
 

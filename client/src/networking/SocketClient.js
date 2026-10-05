@@ -145,6 +145,11 @@ export function kickPlayer(playerId) {
   socket.emit("kick_player", { playerId });
 }
 
+// Lobby: tell the room you are (or are no longer) ready to start.
+export function setReady(ready) {
+  socket.emit("set_ready", { ready });
+}
+
 export function removePlayer(playerId) {
   socket.emit("remove_player", { playerId });
 }

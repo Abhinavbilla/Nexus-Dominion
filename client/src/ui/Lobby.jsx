@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useGameStore } from "../state/gameStore.js";
-import { startGame, leaveRoom, addAI, removePlayer } from "../networking/SocketClient.js";
+import { startGame, leaveRoom, addAI, removePlayer, setReady } from "../networking/SocketClient.js";
 import Backdrop from "./Backdrop.jsx";
 import Logo from "./Logo.jsx";
 import { PlayerEmblem } from "./bits.jsx";
@@ -26,7 +26,10 @@ export default function Lobby() {
   const isHost = players.find((p) => p.isHost)?.id === playerId;
   const absent = players.filter((p) => !p.isAI && !p.connected);
   const allPresent = absent.length === 0;
-  const canStart = isHost && players.length >= 2 && allPresent;
+  const waitingReady = players.filter((p) => !p.isAI && !p.isHost && p.connected && !p.ready);
+  const allReady = waitingReady.length === 0;
+  const me = players.find((p) => p.id === playerId);
+  const canStart = isHost && players.length >= 2 && allPresent && allReady;
   const slots = Array.from({ length: MAX_PLAYERS }, (_, i) => players[i] || null);
 
   async function copy() {
@@ -68,6 +71,9 @@ export default function Lobby() {
                 </div>
                 {player?.id === playerId && <span className="lobby-slot-you">YOU</span>}
                 {player?.isHost && <span className="lobby-slot-host">HOST</span>}
+                {player && !player.isAI && !player.isHost && (
+                  <span className={`lobby-ready ${player.connected && player.ready ? "lobby-ready-on" : ""}`}>{player.connected && player.ready ? "Ready" : "Not ready"}</span>
+                )}
                 {player && isHost && player.id !== playerId && (
                   <button className="lobby-ai-remove" onClick={() => removePlayer(player.id)} aria-label={`Remove ${player.name}`}>
                     Remove
@@ -92,17 +98,23 @@ export default function Lobby() {
             </div>
           )}
 
-          <div className={`lobby-presence ${allPresent ? "lobby-presence-ok" : ""}`}>
-            {allPresent ? "Everyone is present" : `Waiting for ${absent.map((p) => p.name).join(", ")} to return`}
+          <div className={`lobby-presence ${allPresent && allReady ? "lobby-presence-ok" : ""}`}>
+            {!allPresent
+              ? `Waiting for ${absent.map((p) => p.name).join(", ")} to return`
+              : !allReady
+              ? `Waiting for ${waitingReady.map((p) => p.name).join(", ")} to be ready`
+              : "Everyone is ready"}
           </div>
 
           <div className="lobby-actions">
             {isHost ? (
               <button className="btn btn-primary lobby-start" disabled={!canStart} onClick={() => startGame("normal")}>
-                {canStart ? "Start Game" : !allPresent ? "Waiting for players" : "Need 2+ Players"}
+                {canStart ? "Start Game" : !allPresent ? "Waiting for players" : !allReady ? "Waiting for ready" : "Need 2+ Players"}
               </button>
             ) : (
-              <span className="text-dim">Waiting for the host to start the match…</span>
+              <button className={`btn lobby-start ${me?.ready ? "" : "btn-primary"}`} onClick={() => setReady(!me?.ready)}>
+                {me?.ready ? "Ready — click to cancel" : "I'm ready"}
+              </button>
             )}
             <button className="btn btn-danger" onClick={leaveRoom}>
               Leave Room
