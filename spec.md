@@ -152,7 +152,7 @@ Target match duration:
 
 Approximately 10–20 minutes.
 
-The game may end earlier if a player reaches the victory threshold.
+The game may end earlier if a player reaches the victory threshold (the match then ends when that round completes; see §38).
 
 ---
 
@@ -330,6 +330,23 @@ Player 4:
 When fewer than four players are present:
 
 unused starting locations remain neutral.
+
+Exception — three players:
+
+Three players start on alternating board corners instead, so that no seat is
+isolated or crowded (all pairwise distances are equal):
+
+Player 1:
+(4, 0)
+
+Player 2:
+(-4, 4)
+
+Player 3:
+(0, -4)
+
+Configurable as `STARTING_POSITIONS_3P`. Two-player matches use Player 1 and
+Player 2 positions above (opposite corners).
 
 Players must not begin with immediately adjacent starting territories.
 
@@ -1104,8 +1121,8 @@ next resource-generation phase.
 Every state-changing action resolves in this exact order:
 
 `validate → spend resources → spend Action Point → apply action → recalculate
-affected Supply Chains → award newly earned Dominion → check victory → create
-event metadata → broadcast full authoritative state`.
+affected Supply Chains → award newly earned Dominion → check victory threshold
+(flags the match; see §38) → create event metadata → broadcast full authoritative state`.
 
 The starting player rotates every round.
 
@@ -1139,15 +1156,28 @@ The project must later measure first-player advantage experimentally.
 
 There are two victory conditions.
 
-## Immediate Victory
+## Threshold Victory (decided at round end)
 
-A player wins immediately if:
+When any player's Dominion Points >= the configured victory threshold, the match
+is flagged as being in its final round. It does NOT end immediately. The round is
+played to completion so that every player has taken the same number of turns,
+and the match then ends at the end of that round.
 
-Dominion Points >= configured victory threshold.
+The winner is the player with the highest Dominion Points at that moment
+(ties use the tie-breakers in §39). The HUD shows a "FINAL ROUND" indicator once
+the threshold has been reached.
 
-Default:
+Default threshold:
 
 30 Dominion Points.
+
+Rationale: if the match ended the instant a threshold was reached, whoever moved
+first in the deciding round would have a systematic advantage. Simulation
+(600+ mirror matches per player count) measured seat win rates of 59/41 (2p) and
+28/33/17/21 (4p) under immediate victory; round-end victory removed the skew.
+
+Configurable via `VICTORY_AT_ROUND_END` (default `true`). Setting it to `false`
+restores immediate victory.
 
 ## Round-Limit Victory
 
@@ -1353,8 +1383,8 @@ All AI weights must be configurable.
 
 The strategic AI should approximately prioritize:
 
-1. Immediate victory.
-2. Preventing immediate opponent victory.
+1. Reaching the victory threshold while leading (the winning move).
+2. Preventing an opponent from winning.
 3. Completing a high-value Supply Chain.
 4. Capturing strategically valuable territory.
 5. Protecting important Supply Chain links.
