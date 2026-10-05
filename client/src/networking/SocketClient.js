@@ -86,6 +86,8 @@ export function initSocketClient() {
   });
   socket.on("state_sync", ({ gameState }) => useGameStore.getState().applyGameState(gameState));
 
+  socket.on("rematch_status", (status) => useGameStore.getState().setRematch(status));
+
   socket.on("timer_tick", ({ turnTimeRemaining }) => useGameStore.getState().setTurnTimeRemaining(turnTimeRemaining));
 
   socket.on("ai_explanation", (entry) => useGameStore.getState().pushAIExplanation(entry));
@@ -129,6 +131,10 @@ export function endPlayerTurn() {
 
 export function sendChatMessage(text) {
   socket.emit("chat_message", { text });
+}
+
+export function voteRematch() {
+  socket.emit("rematch_vote");
 }
 
 // Leave a match in progress (the server skips your turns / awards a forfeit win if you were the last opponent).

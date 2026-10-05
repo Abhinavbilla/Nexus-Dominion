@@ -6,8 +6,9 @@ import express from "express";
 import cors from "cors";
 import { Server } from "socket.io";
 
-import { validateGameConfig } from "@hex-dominion/shared/gameConfig.js";
-import { endTurn } from "./GameEngine.js";
+import { randomUUID } from "node:crypto";
+import { validateGameConfig, resolveModeConfig } from "@hex-dominion/shared/gameConfig.js";
+import { endTurn, createMatch, startMatch } from "./GameEngine.js";
 import { processClaim, processBuild, processAttack, processFortify } from "./ActionProcessor.js";
 import { RoomManager } from "./RoomManager.js";
 import { createAIController } from "./AIController.js";
@@ -74,6 +75,56 @@ function stopTurnTimer(room) {
     clearInterval(timer);
     roomTimers.delete(room.code);
   }
+}
+
+// ---- Rematch (after a match ends) ------------------------------------------------------
+// Participants of the next match: everyone who has not left. A human who disconnected after the
+// match is not waited for. AIs always take part and never need to vote.
+function rematchParticipants(room) {
+  return room.state.players.filter((p) => !p.left && (p.isAI || p.connected));
+}
+
+function broadcastRematch(room) {
+  const humans = rematchParticipants(room).filter((p) => !p.isAI);
+  io.to(room.code).emit("rematch_status", {
+    voters: [...(room.rematchVotes || [])],
+    needed: humans.map((p) => p.id),
+    canRematch: rematchParticipants(room).length >= 2 && humans.length >= 1,
+  });
+}
+
+// Starts the rematch once every participating human has voted; closes the room if nobody is left.
+function settleRematch(room) {
+  if (!room.state || room.state.status !== "finished") return;
+  const participants = rematchParticipants(room);
+  const humans = participants.filter((p) => !p.isAI);
+  if (humans.length === 0) {
+    stopTurnTimer(room);
+    roomManager.rooms.delete(room.code);
+    return;
+  }
+  broadcastRematch(room);
+  const votes = room.rematchVotes || new Set();
+  if (participants.length < 2 || !humans.every((p) => votes.has(p.id))) return;
+
+  const playersInput = participants.map((p) => ({
+    id: p.id,
+    name: p.name,
+    socketId: p.socketId,
+    reconnectToken: p.reconnectToken,
+    isAI: p.isAI,
+    aiType: p.aiType,
+  }));
+  const mode = room.state.mode;
+  const config = resolveModeConfig(baseConfig, mode, playersInput.length);
+  const state = createMatch({ matchId: randomUUID(), mode, playersInput, initialSeed: Date.now() >>> 0, config });
+  startMatch(state, config);
+  room.state = state;
+  room.config = config;
+  room.rematchVotes = new Set();
+  startTurnTimer(room);
+  io.to(room.code).emit("game_started", { gameState: state.toWireFormat() });
+  aiController.maybeRun(room);
 }
 
 const ACTION_HANDLERS = {
@@ -211,6 +262,16 @@ io.on("connection", (socket) => {
     });
   });
 
+  socket.on("rematch_vote", () => {
+    const room = roomManager.getRoom(socket.data.roomCode);
+    if (!room || !room.state || room.state.status !== "finished") return;
+    const player = room.state.getPlayer(socket.data.playerId);
+    if (!player || player.isAI || player.left) return;
+    room.rematchVotes = room.rematchVotes || new Set();
+    room.rematchVotes.add(player.id);
+    settleRematch(room);
+  });
+
   // Leaving a match in progress. The leaver's hexes stay on the board and their turns are
   // skipped. If only one participant is left they win by forfeit; if no humans remain the
   // room is closed so AI-only matches never run forever.
@@ -228,6 +289,12 @@ io.on("connection", (socket) => {
     socket.data.roomCode = null;
     socket.data.playerId = null;
 
+    if (state.status === "finished") {
+      // Leaving from the results screen = declining the rematch.
+      if (room.rematchVotes) room.rematchVotes.delete(player.id);
+      settleRematch(room);
+      return;
+    }
     if (state.status !== "playing") return;
     const active = state.players.filter((p) => !p.left);
     if (!active.some((p) => !p.isAI)) {
@@ -266,7 +333,10 @@ io.on("connection", (socket) => {
     const playerId = socket.data.playerId;
     if (!playerId) return;
     const room = roomManager.markDisconnected(playerId);
-    if (room) io.to(room.code).emit("player_disconnected", { playerId });
+    if (room) {
+      io.to(room.code).emit("player_disconnected", { playerId });
+      settleRematch(room); // a disconnect on the results screen must not block a rematch
+    }
   });
 });
 

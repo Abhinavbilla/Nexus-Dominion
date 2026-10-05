@@ -31,6 +31,7 @@ export const useGameStore = create((set, get) => ({
   pendingBuildType: null,
   muted: false,
   helpOpen: false,
+  rematch: { voters: [], needed: [], canRematch: true },
 
   setSocketConnected: (connected) => set({ socketConnected: connected }),
   setError: (error) => set({ error }),
@@ -41,12 +42,20 @@ export const useGameStore = create((set, get) => ({
   setLobby: ({ roomCode, players }) => set({ roomCode, lobbyPlayers: players, screen: "lobby" }),
   updateLobbyPlayers: (players) => set({ lobbyPlayers: players }),
 
-  applyGameState: (gameState) =>
+  // A new matchId means a rematch started: clear everything tied to the previous match.
+  applyGameState: (gameState) => {
+    const prev = get().gameState;
+    const fresh = prev && prev.matchId !== gameState.matchId;
     set({
       gameState,
       turnTimeRemaining: gameState.turnTimeRemaining,
       screen: gameState.status === "finished" ? "victory" : "game",
-    }),
+      ...(!prev || fresh
+        ? { aiExplanations: [], selectedHex: null, actionMode: null, pendingBuildType: null, hoveredHex: null, helpOpen: false, rematch: { voters: [], needed: [], canRematch: true } }
+        : {}),
+    });
+  },
+  setRematch: (rematch) => set({ rematch }),
 
   setTurnTimeRemaining: (seconds) => set({ turnTimeRemaining: seconds }),
 
