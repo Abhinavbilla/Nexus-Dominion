@@ -18,40 +18,56 @@ function contactShadow(ctx, y = 112) {
   ctx.restore();
 }
 
-function logEnd(ctx, x, y, r) {
-  // bark
-  ctx.fillStyle = radialGradient(ctx, x - r * 0.3, y - r * 0.3, r * 0.2, r * 1.1, [[0, "#9a6a38"], [1, "#4e2c12"]]);
+// One horizontal log in 3/4 view: shaded bark cylinder, rounded far end, ringed cut face near end.
+function log3d(ctx, x0, x1, cy, r) {
+  const rx = r * 0.42;
+  // far (left) end cap, rounded bark
+  ctx.fillStyle = linearGradient(ctx, x0, cy - r, x0, cy + r, [[0, "#7a4a22"], [0.5, "#5a3317"], [1, "#2f1a0a"]]);
   ctx.beginPath();
-  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.ellipse(x0, cy, rx, r, 0, 0, Math.PI * 2);
   ctx.fill();
-  ctx.strokeStyle = "rgba(0,0,0,0.45)";
-  ctx.lineWidth = 1.4;
-  ctx.stroke();
-  // cut face
-  const face = r * 0.78;
-  ctx.fillStyle = radialGradient(ctx, x - face * 0.25, y - face * 0.3, face * 0.1, face, [[0, "#f6d9a0"], [0.7, "#e2ae6c"], [1, "#c88b4c"]]);
-  ctx.beginPath();
-  ctx.arc(x, y, face, 0, Math.PI * 2);
-  ctx.fill();
-  // growth rings
-  ctx.strokeStyle = "rgba(120,70,28,0.55)";
-  ctx.lineWidth = 1.1;
-  for (const k of [0.28, 0.52, 0.76]) {
+  // cylinder body
+  ctx.fillStyle = linearGradient(ctx, 0, cy - r, 0, cy + r, [[0, "#7c4b24"], [0.28, "#c68c54"], [0.55, "#8c5a2c"], [0.85, "#52301a"], [1, "#2e1a0c"]]);
+  ctx.fillRect(x0, cy - r, x1 - x0, r * 2);
+  // bark grooves running along the log
+  ctx.lineCap = "round";
+  for (let i = 0; i < 6; i++) {
+    const gy = cy - r + (i + 0.6) * ((r * 2) / 6.4);
+    ctx.strokeStyle = i % 2 ? "rgba(40,20,8,0.5)" : "rgba(255,220,160,0.18)";
+    ctx.lineWidth = 1.2;
     ctx.beginPath();
-    ctx.arc(x + r * 0.02, y, face * k, 0, Math.PI * 2);
+    ctx.moveTo(x0 + 2, gy);
+    for (let x = x0 + 8; x < x1; x += 9) ctx.lineTo(x, gy + (((x * 7) % 3) - 1) * 0.8);
     ctx.stroke();
   }
-  ctx.fillStyle = "rgba(100,56,22,0.7)";
+  // near (right) end: dark bark rim, then the cut face
+  ctx.fillStyle = "#3b2210";
   ctx.beginPath();
-  ctx.arc(x, y, r * 0.07, 0, Math.PI * 2);
+  ctx.ellipse(x1, cy, rx, r, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = radialGradient(ctx, x1 - rx * 0.2, cy - r * 0.25, 1, r * 0.9, [[0, "#fbe3b0"], [0.65, "#e5b26e"], [1, "#c58a4a"]]);
+  ctx.beginPath();
+  ctx.ellipse(x1, cy, rx * 0.8, r * 0.82, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(120,70,28,0.6)";
+  ctx.lineWidth = 1;
+  for (const k of [0.3, 0.55, 0.78]) {
+    ctx.beginPath();
+    ctx.ellipse(x1, cy, rx * 0.8 * k, r * 0.82 * k, 0, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  ctx.fillStyle = "rgba(100,56,22,0.8)";
+  ctx.beginPath();
+  ctx.arc(x1, cy, 1.6, 0, Math.PI * 2);
   ctx.fill();
 }
 
 function drawWood(ctx) {
-  contactShadow(ctx, 108);
-  const r = 19;
-  // back-to-front pyramid of log ends
-  [[64, 40], [47, 71], [81, 71], [30, 102], [64, 102], [98, 102]].forEach(([x, y]) => logEnd(ctx, x, y, r));
+  contactShadow(ctx, 112);
+  // back log, top log, then the front log (painter's order)
+  log3d(ctx, 8, 76, 86, 18);
+  log3d(ctx, 24, 92, 52, 18);
+  log3d(ctx, 34, 102, 104, 18);
 }
 
 function ingot(ctx, cx, base, w, h, d) {
