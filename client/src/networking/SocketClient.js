@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 import { useGameStore } from "../state/gameStore.js";
-import { playSfx, playSfxForEvent } from "../audio/AudioManager.js";
+import { playSfxForEvent, playResultSfx, playYourTurnSfx } from "../audio/AudioManager.js";
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || (import.meta.env.PROD ? window.location.origin : "http://localhost:3001");
 const SESSION_KEY = "hexdominion_session";
@@ -75,9 +75,14 @@ export function initSocketClient() {
 
   socket.on("game_started", ({ gameState }) => useGameStore.getState().applyGameState(gameState));
   socket.on("action_result", ({ gameState, event }) => {
+    const previous = useGameStore.getState().gameState;
     useGameStore.getState().applyGameState(gameState);
     playSfxForEvent(event);
-    if (gameState.status === "finished") playSfx("victory");
+
+    const me = useGameStore.getState().playerId;
+    const isMine = (g) => g?.players[g.currentPlayerIndex]?.id === me;
+    if (gameState.status === "finished") playResultSfx(gameState, me);
+    else if (isMine(gameState) && !isMine(previous)) playYourTurnSfx();
   });
   socket.on("state_sync", ({ gameState }) => useGameStore.getState().applyGameState(gameState));
 

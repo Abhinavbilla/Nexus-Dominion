@@ -47,6 +47,7 @@ export default class GameScene extends Phaser.Scene {
     const nextCellsByKey = new Map(gameState.board.map((c) => [hexKey(c.q, c.r), c]));
 
     this._diffAndAnimate(gameState.board, nextCellsByKey);
+    this._celebrateNewChains(gameState.activeSupplyChains || []);
     this.cellsByKey = nextCellsByKey;
     this._drawBoard(gameState.board);
     this._drawSupplyChains(gameState.activeSupplyChains);
@@ -106,6 +107,22 @@ export default class GameScene extends Phaser.Scene {
     if (!selectedHex) return;
     const { x, y } = this._hexToScreen(selectedHex.q, selectedHex.r);
     drawSelection(this.selectionLayer, x, y, HEX_SIZE);
+  }
+
+  // Burst + label on the City endpoint when a Supply Chain newly becomes active.
+  _celebrateNewChains(chains) {
+    const keys = new Set(chains.map((c) => `${c.playerId}|${c.sourceKey}`));
+    if (this.prevChainKeys) {
+      for (const chain of chains) {
+        if (this.prevChainKeys.has(`${chain.playerId}|${chain.sourceKey}`)) continue;
+        const [q, r] = chain.cityKey.split(",").map(Number);
+        const { x, y } = this._hexToScreen(q, r);
+        const color = colorForPlayer(this.playersById.get(chain.playerId));
+        this.effects.burst(x, y, color);
+        this._floatText(x, y - 8, "SUPPLY CHAIN", color);
+      }
+    }
+    this.prevChainKeys = keys;
   }
 
   _floatText(x, y, text, color) {
