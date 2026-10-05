@@ -108,6 +108,7 @@ export class RoomManager {
     const room = this.rooms.get(roomCode);
     if (!room) return { error: "Room not found" };
     const player = room.state ? room.state.getPlayer(playerId) : room.lobbyPlayers.find((p) => p.id === playerId);
+    if (player && player.left) return { error: "You left this match" };
     if (!player || player.reconnectToken !== reconnectToken) {
       return { error: "Invalid reconnection credentials" };
     }

@@ -28,6 +28,8 @@ function describe(gs, e) {
       return { icon: "endturn", color: "#66728f", dim: true, body: <><Who gameState={gs} id={e.playerId} />'s turn</> };
     case "turn_ended":
       return null;
+    case "player_left":
+      return { icon: "endturn", color: "#ee5a5a", body: <><Who gameState={gs} id={e.playerId} /> left the match</> };
     case "chain_income":
       return { icon: "chain", color: "#ffd47a", body: <><Who gameState={gs} id={e.playerId} /> earns <em>+{e.amount} DP</em> from {e.chains} Supply Chain{e.chains > 1 ? "s" : ""}</> };
     case "round_started":

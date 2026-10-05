@@ -33,7 +33,7 @@ export default function PlayerList() {
               </div>
               <div className="pcard-sub">
                 {PLAYER_COLOR_NAME[p.color]}
-                {!p.connected && " · offline"} · <Icon name="plains" size={11} /> {territory}
+                {p.left ? " · left" : !p.connected ? " · offline" : ""} · <Icon name="plains" size={11} /> {territory}
               </div>
               <div className="pcard-bar" title={`${p.dominionPoints} / ${target} Dominion`}>
                 <div className="pcard-bar-fill" style={{ width: `${Math.min(100, (p.dominionPoints / target) * 100)}%` }} />

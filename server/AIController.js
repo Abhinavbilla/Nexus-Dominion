@@ -24,6 +24,14 @@ export function createAIController({ io, broadcastStateUpdate, stopTurnTimer }) 
     const state = room.state;
     if (!state || state.status !== "playing") return running.delete(room.code);
     const player = state.getCurrentPlayer();
+    if (player.left) {
+      // A player who left the match: skip their turn immediately.
+      const result = endTurn(state, room.config, "left");
+      broadcastStateUpdate(room, { action: "end_turn", reason: "left", playerId: player.id });
+      if (result.matchFinished) stopTurnTimer(room);
+      setTimeout(() => step(room), 250);
+      return;
+    }
     if (!player.isAI) return running.delete(room.code);
 
     const { action, explanation } = brainFor(room, player).chooseAction(state, room.config, player.id);
@@ -60,7 +68,8 @@ export function createAIController({ io, broadcastStateUpdate, stopTurnTimer }) 
     maybeRun(room) {
       const state = room.state;
       if (!state || state.status !== "playing") return;
-      if (!state.getCurrentPlayer().isAI) return;
+      const current = state.getCurrentPlayer();
+      if (!current.isAI && !current.left) return;
       if (running.has(room.code)) return;
       running.add(room.code);
       setTimeout(() => step(room), THINK_DELAY_MS);

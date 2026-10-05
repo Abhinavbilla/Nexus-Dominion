@@ -131,6 +131,13 @@ export function sendChatMessage(text) {
   socket.emit("chat_message", { text });
 }
 
+// Leave a match in progress (the server skips your turns / awards a forfeit win if you were the last opponent).
+export function leaveMatch() {
+  socket.emit("leave_match");
+  clearSession();
+  useGameStore.getState().resetToMenu();
+}
+
 export function leaveRoom() {
   socket.emit("leave_room");
   clearSession();

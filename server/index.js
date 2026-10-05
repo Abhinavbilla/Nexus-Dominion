@@ -211,6 +211,50 @@ io.on("connection", (socket) => {
     });
   });
 
+  // Leaving a match in progress. The leaver's hexes stay on the board and their turns are
+  // skipped. If only one participant is left they win by forfeit; if no humans remain the
+  // room is closed so AI-only matches never run forever.
+  socket.on("leave_match", () => {
+    const room = roomManager.getRoom(socket.data.roomCode);
+    if (!room || !room.state) return;
+    const state = room.state;
+    const player = state.getPlayer(socket.data.playerId);
+    if (!player || player.left) return;
+
+    player.left = true;
+    player.connected = false;
+    state.pushEvent({ type: "player_left", playerId: player.id });
+    socket.leave(room.code);
+    socket.data.roomCode = null;
+    socket.data.playerId = null;
+
+    if (state.status !== "playing") return;
+    const active = state.players.filter((p) => !p.left);
+    if (!active.some((p) => !p.isAI)) {
+      state.status = "finished";
+      state.winReason = "abandoned";
+      stopTurnTimer(room);
+      roomManager.rooms.delete(room.code);
+      return;
+    }
+    if (active.length === 1) {
+      state.status = "finished";
+      state.winnerId = active[0].id;
+      state.winReason = "forfeit";
+      state.pushEvent({ type: "game_over", winnerId: active[0].id, reason: "forfeit" });
+      stopTurnTimer(room);
+      broadcastStateUpdate(room, { action: "leave", playerId: player.id });
+      return;
+    }
+    if (state.getCurrentPlayer().id === player.id) {
+      const result = endTurn(state, room.config, "left");
+      broadcastStateUpdate(room, { action: "end_turn", reason: "left" });
+      if (result.matchFinished) stopTurnTimer(room);
+    } else {
+      broadcastStateUpdate(room, { action: "leave", playerId: player.id });
+    }
+  });
+
   socket.on("leave_room", () => {
     const { roomCode, playerId } = socket.data;
     if (!roomCode || !playerId) return;

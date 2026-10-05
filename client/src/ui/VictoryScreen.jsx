@@ -9,7 +9,7 @@ import "./VictoryScreen.css";
 
 const OUTCOME_TEXT = { won: "VICTORY", lost: "DEFEAT", draw: "STALEMATE" };
 const OUTCOME_SUB = { won: "You won the match", lost: "You lost the match", draw: "No single winner" };
-const REASON_TEXT = { dominion_threshold: "Dominion threshold reached", round_limit: "Round limit reached", draw: "Perfectly tied" };
+const REASON_TEXT = { dominion_threshold: "Dominion threshold reached", round_limit: "Round limit reached", draw: "Perfectly tied", forfeit: "All opponents left the match" };
 
 // Confetti / embers canvas for a win.
 function Celebration({ colors }) {

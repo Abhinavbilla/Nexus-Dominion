@@ -2,6 +2,7 @@ import { useGameStore, getMyPlayer, isMyTurn } from "../state/gameStore.js";
 import { rulesOf } from "./rules.js";
 import Icon from "./Icon.jsx";
 import { PlayerEmblem, ResourceChip } from "./bits.jsx";
+import ExitMatch from "./ExitMatch.jsx";
 import "./HUD.css";
 
 function TimerRing({ seconds, total }) {
@@ -104,6 +105,8 @@ export default function HUD() {
           ))}
         </div>
       </div>
+
+      <ExitMatch />
 
       <button className="hud-icon-btn" onClick={toggleMuted} title={muted ? "Unmute" : "Mute"} aria-label="Toggle sound">
         <Icon name={muted ? "mute" : "sound"} size={20} />
