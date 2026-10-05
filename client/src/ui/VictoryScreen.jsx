@@ -68,14 +68,12 @@ const GOLD_CONFETTI = ["#ffd47a", "#e9b44c", "#fff1c9", "#4c8dff", "#ff6b3d"];
 export default function VictoryScreen() {
   const gameState = useGameStore((s) => s.gameState);
   const playerId = useGameStore((s) => s.playerId);
-  const rematch = useGameStore((s) => s.rematch);
   if (!gameState) return null;
 
   const winner = gameState.players.find((p) => p.id === gameState.winnerId);
   const isDraw = !winner;
   const outcome = isDraw ? "draw" : winner.id === playerId ? "won" : "lost";
   const ranked = [...gameState.players].sort((a, b) => b.dominionPoints - a.dominionPoints);
-  const iVoted = rematch.voters.includes(playerId);
   const territory = (id) => gameState.board.filter((c) => c.ownerId === id).length;
 
   return (
@@ -132,28 +130,14 @@ export default function VictoryScreen() {
           </div>
 
           <div className="victory-actions">
-            {rematch.canRematch ? (
-              <button className="btn btn-primary victory-cta" disabled={iVoted} onClick={voteRematch}>
-                {iVoted ? `Waiting for others (${rematch.voters.length}/${rematch.needed.length})` : "Rematch"}
-              </button>
-            ) : (
-              <span className="text-faint victory-norematch">No opponents left for a rematch</span>
-            )}
+            <button className="btn btn-primary victory-cta" onClick={voteRematch}>
+              Rematch
+            </button>
+            <span className="text-faint victory-norematch">Everyone returns to the room lobby to get ready</span>
             <button className="btn btn-ghost" onClick={leaveMatch}>
               Return to Main Menu
             </button>
           </div>
-          {rematch.canRematch && rematch.needed.length > 1 && (
-            <div className="victory-votes">
-              {gameState.players
-                .filter((p) => rematch.needed.includes(p.id))
-                .map((p) => (
-                  <span key={p.id} className={rematch.voters.includes(p.id) ? "voted" : ""}>
-                    {p.name}
-                  </span>
-                ))}
-            </div>
-          )}
         </div>
       </div>
     </Backdrop>

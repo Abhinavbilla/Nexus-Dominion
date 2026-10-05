@@ -65,12 +65,52 @@ export class RoomManager {
     return { room };
   }
 
-  removeAI({ roomCode, requestingPlayerId, aiPlayerId }) {
+  // Host-only: remove any other player (human or AI) from the lobby. Humans are not banned —
+  // they can rejoin with the room code.
+  removePlayer({ roomCode, requestingPlayerId, targetId }) {
     const room = this.rooms.get(roomCode);
-    if (!room || room.state) return { error: "Cannot remove AI now" };
-    if (room.hostPlayerId !== requestingPlayerId) return { error: "Only the host can remove AI players" };
-    room.lobbyPlayers = room.lobbyPlayers.filter((p) => !(p.isAI && p.id === aiPlayerId));
-    return { room };
+    if (!room || room.state) return { error: "Players can only be removed in the lobby" };
+    if (room.hostPlayerId !== requestingPlayerId) return { error: "Only the host can remove players" };
+    if (targetId === requestingPlayerId) return { error: "Use Leave Room to leave" };
+    const removed = room.lobbyPlayers.find((p) => p.id === targetId);
+    if (!removed) return { error: "Player not found" };
+    room.lobbyPlayers = room.lobbyPlayers.filter((p) => p.id !== targetId);
+    return { room, removed };
+  }
+
+  // Hands the host role to a random human who is still in the room (present ones first).
+  pickNewHost(room) {
+    const pool = room.state ? room.state.players : room.lobbyPlayers;
+    const humans = pool.filter((p) => !p.isAI && !p.left);
+    const present = humans.filter((p) => p.connected !== false);
+    const candidates = present.length ? present : humans;
+    if (candidates.length === 0) return null;
+    const next = candidates[Math.floor(Math.random() * candidates.length)];
+    room.hostPlayerId = next.id;
+    return next;
+  }
+
+  // After a match: everyone who has not left goes back to the room's lobby (same code, players, AIs).
+  returnToLobby(room) {
+    const keep = room.state.players.filter((p) => !p.left);
+    room.lobbyPlayers = keep.map((p) => ({
+      id: p.id,
+      name: p.name,
+      socketId: p.socketId,
+      reconnectToken: p.reconnectToken,
+      connected: p.connected,
+      isAI: Boolean(p.isAI),
+      aiType: p.aiType || null,
+    }));
+    room.state = null;
+    room.config = null;
+    if (!room.lobbyPlayers.some((p) => !p.isAI)) {
+      this.rooms.delete(room.code);
+      return null;
+    }
+    const host = room.lobbyPlayers.find((p) => p.id === room.hostPlayerId);
+    if (!host || !host.connected) this.pickNewHost(room);
+    return room;
   }
 
   startGame({ roomCode, requestingPlayerId, mode }) {
@@ -79,6 +119,8 @@ export class RoomManager {
     if (room.state) return { error: "Game already started" };
     if (room.hostPlayerId !== requestingPlayerId) return { error: "Only the host can start the game" };
     if (room.lobbyPlayers.length < 2) return { error: "Need at least 2 players" };
+    const absent = room.lobbyPlayers.filter((p) => !p.isAI && !p.connected);
+    if (absent.length) return { error: `Waiting for ${absent.map((p) => p.name).join(", ")} — remove them or wait` };
 
     const config = resolveModeConfig(this.baseConfig, mode || "normal", room.lobbyPlayers.length);
     const matchId = randomUUID();
@@ -129,7 +171,12 @@ export class RoomManager {
     const room = this.rooms.get(roomCode);
     if (!room || room.state) return null;
     room.lobbyPlayers = room.lobbyPlayers.filter((p) => p.id !== playerId);
-    if (room.lobbyPlayers.length === 0) this.rooms.delete(roomCode);
+    if (!room.lobbyPlayers.some((p) => !p.isAI)) {
+      this.rooms.delete(roomCode);
+      return room;
+    }
+    // The room is never closed because the host left: a random remaining player becomes host.
+    if (room.hostPlayerId === playerId) this.pickNewHost(room);
     return room;
   }
 

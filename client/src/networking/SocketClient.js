@@ -86,7 +86,14 @@ export function initSocketClient() {
   });
   socket.on("state_sync", ({ gameState }) => useGameStore.getState().applyGameState(gameState));
 
-  socket.on("rematch_status", (status) => useGameStore.getState().setRematch(status));
+  socket.on("back_to_lobby", ({ players }) => useGameStore.getState().returnToLobby(players));
+
+  // The host removed us from the lobby (not a ban: the room code still works).
+  socket.on("kicked", ({ message }) => {
+    clearSession();
+    useGameStore.getState().resetToMenu();
+    useGameStore.getState().setError(message);
+  });
 
   socket.on("timer_tick", ({ turnTimeRemaining }) => useGameStore.getState().setTurnTimeRemaining(turnTimeRemaining));
 
@@ -133,6 +140,11 @@ export function sendChatMessage(text) {
   socket.emit("chat_message", { text });
 }
 
+export function removePlayer(playerId) {
+  socket.emit("remove_player", { playerId });
+}
+
+// Rematch: everyone still in the room returns to its lobby.
 export function voteRematch() {
   socket.emit("rematch_vote");
 }

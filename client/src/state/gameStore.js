@@ -31,7 +31,6 @@ export const useGameStore = create((set, get) => ({
   pendingBuildType: null,
   muted: false,
   helpOpen: false,
-  rematch: { voters: [], needed: [], canRematch: true },
 
   setSocketConnected: (connected) => set({ socketConnected: connected }),
   setError: (error) => set({ error }),
@@ -51,11 +50,25 @@ export const useGameStore = create((set, get) => ({
       turnTimeRemaining: gameState.turnTimeRemaining,
       screen: gameState.status === "finished" ? "victory" : "game",
       ...(!prev || fresh
-        ? { aiExplanations: [], selectedHex: null, actionMode: null, pendingBuildType: null, hoveredHex: null, helpOpen: false, rematch: { voters: [], needed: [], canRematch: true } }
+        ? { aiExplanations: [], selectedHex: null, actionMode: null, pendingBuildType: null, hoveredHex: null, helpOpen: false }
         : {}),
     });
   },
-  setRematch: (rematch) => set({ rematch }),
+  // Back to the room lobby after a match (rematch): keep the room, drop everything about the old match.
+  returnToLobby: (players) =>
+    set({
+      screen: "lobby",
+      lobbyPlayers: players,
+      gameState: null,
+      turnTimeRemaining: null,
+      aiExplanations: [],
+      selectedHex: null,
+      actionMode: null,
+      pendingBuildType: null,
+      hoveredHex: null,
+      helpOpen: false,
+      error: null,
+    }),
 
   setTurnTimeRemaining: (seconds) => set({ turnTimeRemaining: seconds }),
 

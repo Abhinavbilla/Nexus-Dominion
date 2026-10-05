@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useGameStore } from "../state/gameStore.js";
-import { startGame, leaveRoom, addAI, removeAI } from "../networking/SocketClient.js";
+import { startGame, leaveRoom, addAI, removePlayer } from "../networking/SocketClient.js";
 import Backdrop from "./Backdrop.jsx";
 import Logo from "./Logo.jsx";
 import { PlayerEmblem } from "./bits.jsx";
@@ -23,8 +23,10 @@ export default function Lobby() {
   const clearError = useGameStore((s) => s.clearError);
   const [copied, setCopied] = useState(false);
 
-  const isHost = players[0]?.id === playerId;
-  const canStart = isHost && players.length >= 2;
+  const isHost = players.find((p) => p.isHost)?.id === playerId;
+  const absent = players.filter((p) => !p.isAI && !p.connected);
+  const allPresent = absent.length === 0;
+  const canStart = isHost && players.length >= 2 && allPresent;
   const slots = Array.from({ length: MAX_PLAYERS }, (_, i) => players[i] || null);
 
   async function copy() {
@@ -61,13 +63,13 @@ export default function Lobby() {
                 <div className="lobby-slot-info">
                   <span className="lobby-slot-name">{player ? player.name : "Open seat"}</span>
                   <span className="lobby-slot-status">
-                    {PLAYER_COLOR_NAME[PLAYER_COLORS[i]]} · {player ? (player.isAI ? "AI opponent" : player.connected ? "Connected" : "Disconnected") : "waiting…"}
+                    {PLAYER_COLOR_NAME[PLAYER_COLORS[i]]} · {player ? (player.isAI ? "AI opponent" : player.connected ? "Present" : "Not present") : "waiting…"}
                   </span>
                 </div>
                 {player?.id === playerId && <span className="lobby-slot-you">YOU</span>}
-                {i === 0 && <span className="lobby-slot-host">HOST</span>}
-                {player?.isAI && isHost && (
-                  <button className="lobby-ai-remove" onClick={() => removeAI(player.id)} aria-label="Remove AI">
+                {player?.isHost && <span className="lobby-slot-host">HOST</span>}
+                {player && isHost && player.id !== playerId && (
+                  <button className="lobby-ai-remove" onClick={() => removePlayer(player.id)} aria-label={`Remove ${player.name}`}>
                     Remove
                   </button>
                 )}
@@ -90,10 +92,14 @@ export default function Lobby() {
             </div>
           )}
 
+          <div className={`lobby-presence ${allPresent ? "lobby-presence-ok" : ""}`}>
+            {allPresent ? "Everyone is present" : `Waiting for ${absent.map((p) => p.name).join(", ")} to return`}
+          </div>
+
           <div className="lobby-actions">
             {isHost ? (
               <button className="btn btn-primary lobby-start" disabled={!canStart} onClick={() => startGame("normal")}>
-                {canStart ? "Start Game" : "Need 2+ Players"}
+                {canStart ? "Start Game" : !allPresent ? "Waiting for players" : "Need 2+ Players"}
               </button>
             ) : (
               <span className="text-dim">Waiting for the host to start the match…</span>

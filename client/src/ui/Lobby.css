@@ -209,6 +209,16 @@
   line-height: 1.25;
 }
 
+.lobby-presence {
+  text-align: center;
+  font-size: 0.86rem;
+  color: var(--gold);
+}
+
+.lobby-presence-ok {
+  color: var(--success);
+}
+
 .lobby-actions {
   display: flex;
   align-items: center;
