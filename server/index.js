@@ -92,6 +92,47 @@ function returnToLobby(room) {
   io.to(room.code).emit("back_to_lobby", { roomCode: room.code, players: lobbyPlayersPublic(lobby) });
 }
 
+// Takes a participant out of a running or finished match (they left, or the host removed them).
+// Their hexes stay on the board and their turns are skipped. If only one participant is left they
+// win by forfeit; if no humans remain the room closes so AI-only matches never run forever.
+function removeFromMatch(room, player, eventType) {
+  const state = room.state;
+  player.left = true;
+  player.connected = false;
+  state.pushEvent({ type: eventType, playerId: player.id });
+  if (room.hostPlayerId === player.id) roomManager.pickNewHost(room); // the room outlives its host
+
+  if (state.status === "finished") {
+    if (!state.players.some((p) => !p.isAI && !p.left)) roomManager.rooms.delete(room.code);
+    return;
+  }
+  if (state.status !== "playing") return;
+  const active = state.players.filter((p) => !p.left);
+  if (!active.some((p) => !p.isAI)) {
+    state.status = "finished";
+    state.winReason = "abandoned";
+    stopTurnTimer(room);
+    roomManager.rooms.delete(room.code);
+    return;
+  }
+  if (active.length === 1) {
+    state.status = "finished";
+    state.winnerId = active[0].id;
+    state.winReason = "forfeit";
+    state.pushEvent({ type: "game_over", winnerId: active[0].id, reason: "forfeit" });
+    stopTurnTimer(room);
+    broadcastStateUpdate(room, { action: "leave", playerId: player.id });
+    return;
+  }
+  if (state.getCurrentPlayer().id === player.id) {
+    const result = endTurn(state, room.config, "left");
+    broadcastStateUpdate(room, { action: "end_turn", reason: "left" });
+    if (result.matchFinished) stopTurnTimer(room);
+  } else {
+    broadcastStateUpdate(room, { action: "leave", playerId: player.id });
+  }
+}
+
 const ACTION_HANDLERS = {
   claim: processClaim,
   build: processBuild,
@@ -249,54 +290,38 @@ io.on("connection", (socket) => {
     returnToLobby(room);
   });
 
-  // Leaving a match in progress. The leaver's hexes stay on the board and their turns are
-  // skipped. If only one participant is left they win by forfeit; if no humans remain the
-  // room is closed so AI-only matches never run forever.
+  // Leaving a match yourself.
   socket.on("leave_match", () => {
     const room = roomManager.getRoom(socket.data.roomCode);
     if (!room || !room.state) return;
-    const state = room.state;
-    const player = state.getPlayer(socket.data.playerId);
+    const player = room.state.getPlayer(socket.data.playerId);
     if (!player || player.left) return;
-
-    player.left = true;
-    player.connected = false;
-    state.pushEvent({ type: "player_left", playerId: player.id });
     socket.leave(room.code);
     socket.data.roomCode = null;
     socket.data.playerId = null;
-    if (room.hostPlayerId === player.id) roomManager.pickNewHost(room); // the room outlives its host
+    removeFromMatch(room, player, "player_left");
+  });
 
-    if (state.status === "finished") {
-      // Leaving from the results screen: the room closes only when no human is left.
-      if (!state.players.some((p) => !p.isAI && !p.left)) roomManager.rooms.delete(room.code);
-      return;
+  // Host-only: remove a player (human or AI) from the running match. Not a ban for the room, but
+  // a removed player cannot rejoin this match.
+  socket.on("kick_player", ({ playerId: targetId } = {}) => {
+    const fail = (message) => socket.emit("error", { code: "KICK_FAILED", message });
+    const room = roomManager.getRoom(socket.data.roomCode);
+    if (!room || !room.state || room.state.status !== "playing") return fail("No match in progress");
+    if (room.hostPlayerId !== socket.data.playerId) return fail("Only the host can remove players");
+    if (targetId === socket.data.playerId) return fail("Use Exit to leave the match yourself");
+    const target = room.state.getPlayer(targetId);
+    if (!target || target.left) return fail("Player not found");
+    if (target.socketId) {
+      const targetSocket = io.sockets.sockets.get(target.socketId);
+      if (targetSocket) {
+        targetSocket.leave(room.code);
+        targetSocket.data.roomCode = null;
+        targetSocket.data.playerId = null;
+        targetSocket.emit("kicked", { message: "The host removed you from the match." });
+      }
     }
-    if (state.status !== "playing") return;
-    const active = state.players.filter((p) => !p.left);
-    if (!active.some((p) => !p.isAI)) {
-      state.status = "finished";
-      state.winReason = "abandoned";
-      stopTurnTimer(room);
-      roomManager.rooms.delete(room.code);
-      return;
-    }
-    if (active.length === 1) {
-      state.status = "finished";
-      state.winnerId = active[0].id;
-      state.winReason = "forfeit";
-      state.pushEvent({ type: "game_over", winnerId: active[0].id, reason: "forfeit" });
-      stopTurnTimer(room);
-      broadcastStateUpdate(room, { action: "leave", playerId: player.id });
-      return;
-    }
-    if (state.getCurrentPlayer().id === player.id) {
-      const result = endTurn(state, room.config, "left");
-      broadcastStateUpdate(room, { action: "end_turn", reason: "left" });
-      if (result.matchFinished) stopTurnTimer(room);
-    } else {
-      broadcastStateUpdate(room, { action: "leave", playerId: player.id });
-    }
+    removeFromMatch(room, target, "player_kicked");
   });
 
   socket.on("leave_room", () => {

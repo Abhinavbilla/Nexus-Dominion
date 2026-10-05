@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { useGameStore } from "../state/gameStore.js";
+import { kickPlayer } from "../networking/SocketClient.js";
 import { rulesOf } from "./rules.js";
 import Icon from "./Icon.jsx";
 import { PlayerEmblem } from "./bits.jsx";
@@ -8,7 +10,20 @@ import "./PlayerList.css";
 export default function PlayerList() {
   const gameState = useGameStore((s) => s.gameState);
   const myId = useGameStore((s) => s.playerId);
+  const [confirmId, setConfirmId] = useState(null);
   if (!gameState) return null;
+  const iAmHost = gameState.hostId === myId && gameState.status === "playing";
+
+  // Two-step removal: first click arms it, second click confirms (auto-disarms after a few seconds).
+  function removeClick(id) {
+    if (confirmId === id) {
+      setConfirmId(null);
+      kickPlayer(id);
+    } else {
+      setConfirmId(id);
+      setTimeout(() => setConfirmId((cur) => (cur === id ? null : cur)), 4000);
+    }
+  }
   const target = rulesOf(gameState).victoryScore;
 
   const ranked = [...gameState.players].sort((a, b) => b.dominionPoints - a.dominionPoints);
@@ -30,6 +45,12 @@ export default function PlayerList() {
                   {p.id === myId && <span className="pcard-you">YOU</span>}
                 </span>
                 {p.id === leaderId && <span className="pcard-lead">LEADING</span>}
+                {p.id === gameState.hostId && <span className="pcard-host">HOST</span>}
+                {iAmHost && p.id !== myId && !p.left && (
+                  <button className={`pcard-remove ${confirmId === p.id ? "pcard-remove-armed" : ""}`} onClick={() => removeClick(p.id)} title="Remove this player from the match">
+                    {confirmId === p.id ? "Confirm?" : "Remove"}
+                  </button>
+                )}
               </div>
               <div className="pcard-sub">
                 {PLAYER_COLOR_NAME[p.color]}

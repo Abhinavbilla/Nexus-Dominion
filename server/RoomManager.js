@@ -87,6 +87,7 @@ export class RoomManager {
     if (candidates.length === 0) return null;
     const next = candidates[Math.floor(Math.random() * candidates.length)];
     room.hostPlayerId = next.id;
+    if (room.state) room.state.hostId = next.id;
     return next;
   }
 
@@ -127,6 +128,7 @@ export class RoomManager {
     const initialSeed = Date.now() >>> 0;
     const state = createMatch({ matchId, mode: config.mode, playersInput: room.lobbyPlayers, initialSeed, config });
     startMatch(state, config);
+    state.hostId = room.hostPlayerId;
 
     room.state = state;
     room.config = config;

@@ -140,6 +140,11 @@ export function sendChatMessage(text) {
   socket.emit("chat_message", { text });
 }
 
+// Host-only, during a match.
+export function kickPlayer(playerId) {
+  socket.emit("kick_player", { playerId });
+}
+
 export function removePlayer(playerId) {
   socket.emit("remove_player", { playerId });
 }

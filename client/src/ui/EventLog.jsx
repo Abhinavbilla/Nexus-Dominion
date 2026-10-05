@@ -30,6 +30,8 @@ function describe(gs, e) {
       return null;
     case "player_left":
       return { icon: "endturn", color: "#ee5a5a", body: <><Who gameState={gs} id={e.playerId} /> left the match</> };
+    case "player_kicked":
+      return { icon: "endturn", color: "#ee5a5a", body: <><Who gameState={gs} id={e.playerId} /> was removed by the host</> };
     case "chain_income":
       return { icon: "chain", color: "#ffd47a", body: <><Who gameState={gs} id={e.playerId} /> earns <em>+{e.amount} DP</em> from {e.chains} Supply Chain{e.chains > 1 ? "s" : ""}</> };
     case "round_started":
