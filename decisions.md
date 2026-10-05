@@ -65,7 +65,7 @@
 
 **Dominion-granting actions**:
 - Claim: +1 (normal) or +2 (City Site)
-- Attack capture: +1 (normal) or +2 (City Site) or +3 (enemy City hex)
+- Attack capture: +2 (normal) or +3 (City Site) or +4 (enemy City hex)
 - Build City: +3
 - Supply Chain completion: +4 (first) or +2 (subsequent)
 
@@ -252,7 +252,7 @@ The following clarifications are binding interpretations of the locked decisions
 
 ### Combat and Command Hubs
 
-- Capturing an enemy City awards **+3 Dominion total**, regardless of underlying
+- Capturing an enemy City awards **+4 Dominion total**, regardless of underlying
   terrain. An unbuilt City Site awards +2; these rewards never stack.
 - A Command Hub is permanent, uncapturable, unremovable, occupies its building
   slot, cannot contain another building, and cannot be fortified.
