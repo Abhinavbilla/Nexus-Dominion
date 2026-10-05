@@ -1,0 +1,12 @@
+# Permanent hosting on Render (free web service). Push this repo to GitHub, then in Render:
+# New + > Blueprint > pick the repo. The Dockerfile builds the client and starts the server.
+# Free instances sleep after ~15 minutes idle (first visit then takes ~30s to wake).
+services:
+  - type: web
+    name: nexus-dominion
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 3001
