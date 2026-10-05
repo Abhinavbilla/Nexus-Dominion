@@ -170,6 +170,35 @@ function drawPine(ctx, x, y, h, rng) {
   ctx.stroke();
 }
 
+function drawOak(ctx, x, y, h) {
+  const r = h * 0.3;
+  ctx.fillStyle = "rgba(0,0,0,0.26)";
+  ellipse(ctx, x + h * 0.08, y + h * 0.03, r * 1.15, h * 0.08);
+  ctx.fill();
+  ctx.fillStyle = "#6a4a30";
+  ctx.fillRect(x - h * 0.05, y - h * 0.34, h * 0.1, h * 0.36);
+  [[-0.34, -0.5, 0.78], [0.34, -0.52, 0.74], [0, -0.78, 0.92], [0, -0.52, 1]].forEach(([dx, dy, k], i) => {
+    const cx = x + dx * r * 1.1;
+    const cy = y + dy * h * 0.9;
+    ctx.fillStyle = radialGradient(ctx, cx - r * 0.35, cy - r * 0.4, r * 0.1, r * k, [[0, i === 3 ? "#8bd075" : "#6fbf62"], [0.6, "#3f8f4a"], [1, "#245e32"]]);
+    ctx.beginPath();
+    ctx.arc(cx, cy, r * k, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
+function drawBush(ctx, x, y, s) {
+  ctx.fillStyle = "rgba(0,0,0,0.22)";
+  ellipse(ctx, x + s * 0.2, y + s * 0.12, s * 0.9, s * 0.26);
+  ctx.fill();
+  [[-0.5, 0], [0.4, -0.05], [0, -0.35]].forEach(([dx, dy]) => {
+    ctx.fillStyle = radialGradient(ctx, x + dx * s - s * 0.2, y + dy * s - s * 0.2, 0, s * 0.62, [[0, "#7ccf6c"], [1, "#2d7a3e"]]);
+    ctx.beginPath();
+    ctx.arc(x + dx * s, y + dy * s, s * 0.55, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
 function drawForest(ctx, m, rng, variant) {
   const { S, cx, cy } = m;
   ctx.fillStyle = radialGradient(ctx, cx, cy, 0, S * 0.9, [[0, "rgba(20,70,35,0.5)"], [1, "rgba(0,0,0,0)"]]);
@@ -180,7 +209,15 @@ function drawForest(ctx, m, rng, variant) {
     const p = pointInCircle(rng, S * 0.62);
     if (trees.every((t) => Math.hypot(t.x - p.x, t.y - p.y) > S * 0.25)) trees.push({ ...p, h: rand(rng, S * 0.4, S * 0.58) });
   }
-  trees.sort((a, b) => a.y - b.y).forEach((t) => drawPine(ctx, cx + t.x, cy + t.y + S * 0.22, t.h, rng));
+  const kinds = trees.map(() => (rng() < 0.38 ? "oak" : "pine"));
+  trees
+    .map((t, i) => ({ ...t, kind: kinds[i] }))
+    .sort((a, b) => a.y - b.y)
+    .forEach((t) => (t.kind === "oak" ? drawOak(ctx, cx + t.x, cy + t.y + S * 0.22, t.h * 0.9) : drawPine(ctx, cx + t.x, cy + t.y + S * 0.22, t.h, rng)));
+  for (let i = 0; i < 5; i++) {
+    const p = pointInCircle(rng, S * 0.72);
+    drawBush(ctx, cx + p.x, cy + p.y + S * 0.3, S * rand(rng, 0.05, 0.09));
+  }
 }
 
 function drawMine(ctx, m, rng) {
@@ -229,6 +266,25 @@ function drawMine(ctx, m, rng) {
       ctx.stroke();
     }
   });
+  // timber-framed mine entrance
+  const ex = cx + S * 0.06;
+  const ey = baseY - S * 0.02;
+  ctx.fillStyle = "#14121a";
+  ctx.beginPath();
+  ctx.moveTo(ex - S * 0.1, ey);
+  ctx.lineTo(ex - S * 0.1, ey - S * 0.12);
+  ctx.arc(ex, ey - S * 0.12, S * 0.1, Math.PI, 0);
+  ctx.lineTo(ex + S * 0.1, ey);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = "#8a5a36";
+  ctx.lineWidth = S * 0.028;
+  ctx.beginPath();
+  ctx.moveTo(ex - S * 0.11, ey);
+  ctx.lineTo(ex - S * 0.11, ey - S * 0.13);
+  ctx.lineTo(ex + S * 0.11, ey - S * 0.13);
+  ctx.lineTo(ex + S * 0.11, ey);
+  ctx.stroke();
   // ore crystals
   for (let i = 0; i < 4; i++) {
     const x = cx + rand(rng, -S * 0.5, S * 0.5);

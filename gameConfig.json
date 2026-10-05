@@ -1,9 +1,14 @@
 {
   "modes": {
     "normal": {
-      "MAX_ROUNDS": 18,
+      "MAX_ROUNDS": 30,
       "TURN_DURATION_SECONDS": 30,
-      "VICTORY_SCORE": 40
+      "VICTORY_SCORE": 90,
+      "BY_PLAYER_COUNT": {
+        "2": { "VICTORY_SCORE": 200, "MAX_ROUNDS": 55 },
+        "3": { "VICTORY_SCORE": 120, "MAX_ROUNDS": 40 },
+        "4": { "VICTORY_SCORE": 90, "MAX_ROUNDS": 30 }
+      }
     },
     "demo": {
       "MAX_ROUNDS": 8,
@@ -109,7 +114,8 @@
     "CAPTURE_ENEMY_CITY": 4,
     "BUILD_CITY": 3,
     "SUPPLY_CHAIN_FIRST": 4,
-    "SUPPLY_CHAIN_SUBSEQUENT": 2
+    "SUPPLY_CHAIN_SUBSEQUENT": 2,
+    "SUPPLY_CHAIN_PER_ROUND": 1
   },
 
   "AI_WEIGHTS": {

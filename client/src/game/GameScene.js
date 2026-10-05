@@ -57,6 +57,7 @@ export default class GameScene extends Phaser.Scene {
     this.tweens.add({ targets: this.iconLayer, y: -3, duration: 650, yoyo: true, repeat: -1, ease: "Sine.InOut" });
 
     this._buildDust();
+    this._buildAtmosphere();
 
     this.cameraController = new CameraController(this);
     this.input.on("pointermove", (p) => this._onPointerMove(p));
@@ -117,6 +118,74 @@ export default class GameScene extends Phaser.Scene {
         blendMode: "ADD",
       })
       .setDepth(6500);
+  }
+
+  // Ambient life: drifting cloud shadows, twinkling stars, and crackling arcs on energy fields.
+  _buildAtmosphere() {
+    if (!this.textures.exists("fx-cloud")) {
+      const c = document.createElement("canvas");
+      c.width = 512;
+      c.height = 256;
+      const x = c.getContext("2d");
+      for (let i = 0; i < 9; i++) {
+        const px = 90 + Math.random() * 330;
+        const py = 70 + Math.random() * 120;
+        const r = 50 + Math.random() * 70;
+        const g = x.createRadialGradient(px, py, 0, px, py, r);
+        g.addColorStop(0, "rgba(0,0,0,0.5)");
+        g.addColorStop(1, "rgba(0,0,0,0)");
+        x.fillStyle = g;
+        x.fillRect(px - r, py - r, r * 2, r * 2);
+      }
+      this.textures.addCanvas("fx-cloud", c);
+    }
+    const R = this.plinthInfo.cx / this.plinthInfo.scale;
+    for (let i = 0; i < 3; i++) {
+      const cloud = this.add.image(-R - 300 + i * 340, -R * 0.5 + i * R * 0.45, "fx-cloud").setDepth(6200).setAlpha(0.2).setScale(2.4 + i * 0.5);
+      this.tweens.add({ targets: cloud, x: R + 400, duration: 70000 + i * 22000, repeat: -1, onRepeat: () => (cloud.x = -R - 500) });
+    }
+
+    this.add
+      .particles(0, 0, "fx-dot", {
+        emitZone: { type: "random", source: new Phaser.Geom.Rectangle(-1400, -900, 2800, 1800) },
+        lifespan: 3200,
+        scale: { min: 0.1, max: 0.32 },
+        alpha: { values: [0, 0.85, 0] },
+        tint: [0xffffff, 0xcfe0ff, 0xffe3a8],
+        frequency: 90,
+        blendMode: "ADD",
+      })
+      .setScrollFactor(0.04)
+      .setDepth(-1500);
+
+    this.arcGfx = this.add.graphics().setDepth(7050).setBlendMode(Phaser.BlendModes.ADD);
+    this.time.addEvent({ delay: 260, loop: true, callback: () => this._drawEnergyArcs() });
+  }
+
+  _drawEnergyArcs() {
+    const g = this.arcGfx;
+    if (!g || !g.scene) return;
+    g.clear();
+    for (const [key, view] of this.views) {
+      if (view.terrain !== "energy_field" || Math.random() < 0.45) continue;
+      const a0 = Math.random() * Math.PI * 2;
+      const pts = [];
+      const ox = view.x;
+      const oy = view.y - 5;
+      for (let i = 0; i <= 5; i++) {
+        const t = i / 5;
+        const ang = a0 + (Math.random() - 0.5) * 0.5;
+        const rad = 4 + t * HEX_SIZE * 0.62;
+        pts.push({ x: ox + Math.cos(ang) * rad + (Math.random() - 0.5) * 4, y: oy + Math.sin(ang) * rad * 0.7 + (Math.random() - 0.5) * 4 });
+      }
+      for (const [w, a] of [[5, 0.12], [2.4, 0.5], [1, 1]]) {
+        g.lineStyle(w, w > 2 ? 0x4aa8ff : 0xdff6ff, a);
+        g.beginPath();
+        g.moveTo(ox, oy);
+        pts.forEach((p) => g.lineTo(p.x, p.y));
+        g.strokePath();
+      }
+    }
   }
 
   _fitCamera() {
@@ -307,6 +376,17 @@ export default class GameScene extends Phaser.Scene {
       .setDepth(view.y + 1);
     view.building = sprite;
     const color = PLAYER_COLOR_HEX[colorName];
+
+    const glow = this.add
+      .image(view.x, view.y + HEX_SIZE * 0.12, "fx-glow")
+      .setTint(color)
+      .setBlendMode(Phaser.BlendModes.ADD)
+      .setDepth(view.y + 0.9)
+      .setDisplaySize(HEX_SIZE * 1.9, HEX_SIZE * 1.1)
+      .setAlpha(0.28);
+    glow.isBuildingFx = true;
+    this.tweens.add({ targets: glow, alpha: { from: 0.18, to: 0.42 }, duration: 1800 + (view.x % 7) * 120, yoyo: true, repeat: -1, ease: "Sine.InOut" });
+    view.extras.push(glow);
 
     if (animate) {
       this.effects.pop(sprite, baseScale);

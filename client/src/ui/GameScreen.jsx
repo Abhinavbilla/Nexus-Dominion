@@ -6,15 +6,16 @@ import { boardArrayToMap } from "../boardMap.js";
 import { BASE_CONFIG } from "../config.js";
 import PhaserGame from "../game/PhaserGame.jsx";
 import HUD from "./HUD.jsx";
+import HintBar from "./HintBar.jsx";
 import ActionBar from "./ActionBar.jsx";
 import BuildMenu from "./BuildMenu.jsx";
 import AttackPreview from "./AttackPreview.jsx";
+import HexInspector from "./HexInspector.jsx";
 import AIExplanation from "./AIExplanation.jsx";
-import EventLog from "./EventLog.jsx";
 import PlayerList from "./PlayerList.jsx";
-import ChatPanel from "./ChatPanel.jsx";
-import HexTooltip from "./HexTooltip.jsx";
+import SideTabs from "./SideTabs.jsx";
 import TurnBanner from "./TurnBanner.jsx";
+import HelpModal from "./HelpModal.jsx";
 import "./GameScreen.css";
 
 function computeHighlightKeys(gameState, me, actionMode, pendingBuildType) {
@@ -54,6 +55,7 @@ export default function GameScreen() {
   const gameState = useGameStore((s) => s.gameState);
   const actionMode = useGameStore((s) => s.actionMode);
   const pendingBuildType = useGameStore((s) => s.pendingBuildType);
+  const selectedHex = useGameStore((s) => s.selectedHex);
   const setSelectedHex = useGameStore((s) => s.setSelectedHex);
   const clearSelection = useGameStore((s) => s.clearSelection);
   const me = getMyPlayer();
@@ -83,35 +85,39 @@ export default function GameScreen() {
     }
   }
 
+  // One contextual slot under the actions: the build menu, the attack preview, or the hex inspector.
+  const showInspector = actionMode !== "build" && !(actionMode === "attack" && selectedHex);
+
   return (
     <div className="game-root">
-      <div className="game-topbar">
-        <HUD />
-      </div>
+      <HUD />
 
       <div className="game-middle">
-        <div className="game-left-panel scrollbar-thin">
+        <div className="game-left">
           <ActionBar />
-          <BuildMenu />
-          <AttackPreview />
-          <AIExplanation />
+          <div className="game-context scrollbar-thin">
+            <BuildMenu />
+            <AttackPreview />
+            {showInspector && <HexInspector />}
+          </div>
         </div>
 
-        <div className="game-board-wrap">
-          <PhaserGame onHexClick={handleHexClick} highlightKeys={highlightKeys} />
-          <HexTooltip />
-          <TurnBanner />
+        <div className="game-center">
+          <HintBar />
+          <div className="game-board-wrap">
+            <PhaserGame onHexClick={handleHexClick} highlightKeys={highlightKeys} />
+            <TurnBanner />
+          </div>
         </div>
 
-        <div className="game-right-panel">
+        <div className="game-right">
           <PlayerList />
-          <ChatPanel />
+          <AIExplanation />
+          <SideTabs />
         </div>
       </div>
 
-      <div className="game-bottom-bar">
-        <EventLog />
-      </div>
+      <HelpModal />
     </div>
   );
 }

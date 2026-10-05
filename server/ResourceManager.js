@@ -1,6 +1,24 @@
 import { BUILDING, RESOURCE_TERRAIN, TERRAIN } from "@hex-dominion/shared/constants.js";
 import { findAllActiveSupplyChains } from "@hex-dominion/shared/supplyChain.js";
 
+// Round-start Dominion income: each active Supply Chain keeps paying while it stays
+// connected. This gives long matches steady progress and makes protecting (or cutting)
+// a chain matter all game, not just when it is first completed.
+export function awardChainDominion(state, config) {
+  const per = config.DOMINION_REWARDS.SUPPLY_CHAIN_PER_ROUND || 0;
+  const awarded = [];
+  if (!per) return awarded;
+  for (const player of state.players) {
+    const chains = state.activeSupplyChains.filter((c) => c.playerId === player.id && c.active).length;
+    if (!chains) continue;
+    const amount = chains * per;
+    player.dominionPoints += amount;
+    awarded.push({ playerId: player.id, amount, chains });
+    state.pushEvent({ type: "chain_income", playerId: player.id, amount, chains });
+  }
+  return awarded;
+}
+
 // Round-start resource generation (spec.md §11-12, §24, §36). Supply Chain
 // resource bonuses are only ever paid here, never mid-turn (decisions.md #12).
 export function generateRoundResources(state, config) {

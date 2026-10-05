@@ -1,0 +1,32 @@
+.help-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  padding: 1rem;
+  background: rgba(4, 6, 12, 0.78);
+  backdrop-filter: blur(4px);
+}
+
+.help-modal-panel {
+  width: min(1060px, 100%);
+  height: min(620px, calc(100vh - 2rem));
+  padding: 1rem 1.3rem 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.help-modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.help-modal-head h2 {
+  font-size: 1.35rem;
+  letter-spacing: 0.26em;
+  color: var(--gold-bright);
+}

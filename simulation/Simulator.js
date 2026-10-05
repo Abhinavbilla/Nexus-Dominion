@@ -40,7 +40,7 @@ function countTerritory(state, playerId) {
 // Fully deterministic for a given (seed, aiTypes, mode): the board comes from
 // `seed` and the Random AI draws from a mulberry32 stream derived from it.
 export function runMatch({ seed, aiTypes, mode = "normal", baseConfig = loadBaseConfig(), maxActions = 5000 }) {
-  const config = resolveModeConfig(baseConfig, mode);
+  const config = resolveModeConfig(baseConfig, mode, aiTypes.length);
   const rng = mulberry32((seed ^ 0x9e3779b9) >>> 0);
   const playersInput = aiTypes.map((type, i) => ({
     id: `p${i + 1}`,

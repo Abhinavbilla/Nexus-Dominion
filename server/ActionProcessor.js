@@ -18,7 +18,7 @@ function spend(player, cost) {
   }
 }
 
-function checkVictory(state, config) {
+export function checkVictory(state, config) {
   if (state.status !== "playing") return;
   if (config.VICTORY_AT_ROUND_END) {
     // Every player gets the same number of turns; the winner is decided when the round ends.

@@ -1,0 +1,163 @@
+.hintbar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: stretch;
+  gap: 0.8rem;
+  padding: 0.45rem 0.6rem 0.45rem 0.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(26, 34, 54, 0.9), rgba(14, 19, 32, 0.92));
+  min-height: 52px;
+}
+
+.hintbar-main {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+  flex: 1.3;
+}
+
+.hintbar-icon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--line-strong);
+  color: var(--text-dim);
+}
+
+.hintbar-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.hintbar-text b {
+  font-family: var(--font-display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+}
+
+.hintbar-text span {
+  font-size: 0.84rem;
+  color: var(--text-dim);
+}
+
+.hintbar-go,
+.hintbar-act,
+.hintbar-ready {
+  border-color: rgba(233, 180, 76, 0.55);
+  background: linear-gradient(90deg, rgba(233, 180, 76, 0.14), rgba(14, 19, 32, 0.92) 60%);
+}
+
+.hintbar-go .hintbar-icon,
+.hintbar-act .hintbar-icon,
+.hintbar-ready .hintbar-icon {
+  color: var(--gold-bright);
+  border-color: var(--gold);
+}
+
+.hintbar-danger {
+  border-color: rgba(238, 90, 90, 0.55);
+  background: linear-gradient(90deg, rgba(238, 90, 90, 0.14), rgba(14, 19, 32, 0.92) 60%);
+}
+
+.hintbar-danger .hintbar-icon {
+  color: #ff8a8a;
+  border-color: rgba(238, 90, 90, 0.6);
+}
+
+.hintbar-ready .hintbar-text b {
+  color: var(--gold-bright);
+}
+
+.hintbar-coach {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.1rem;
+  padding: 0.2rem 1.6rem 0.2rem 0.8rem;
+  position: relative;
+  border-left: 1px solid var(--line);
+}
+
+.hintbar-coach-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+}
+
+.hintbar-coach-text {
+  font-size: 0.8rem;
+  line-height: 1.3;
+  color: var(--text-dim);
+}
+
+.hintbar-x {
+  position: absolute;
+  top: 0.2rem;
+  right: 0.1rem;
+  background: none;
+  border: none;
+  color: var(--text-faint);
+  padding: 2px;
+}
+
+.hintbar-x:hover {
+  color: var(--text);
+}
+
+.hintbar-help {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  align-self: center;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--text-dim);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.hintbar-help:hover {
+  color: var(--gold-bright);
+  border-color: var(--gold);
+}
+
+@media (max-width: 1250px) {
+  .hintbar-coach-text {
+    font-size: 0.74rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .hintbar {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .hintbar-coach {
+    border-left: none;
+    border-top: 1px solid var(--line);
+    padding-left: 0;
+  }
+
+  .hintbar-help {
+    align-self: flex-start;
+  }
+}

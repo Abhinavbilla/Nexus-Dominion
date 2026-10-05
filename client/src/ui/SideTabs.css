@@ -1,0 +1,71 @@
+.sidetabs {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidetabs-head {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.5rem 0.55rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.sidetab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.8rem;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-faint);
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.sidetab:hover {
+  color: var(--text);
+}
+
+.sidetab-on {
+  color: var(--gold-bright);
+  border-bottom-color: var(--gold);
+}
+
+.sidetab-badge {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 0.3rem;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  background: var(--danger);
+  color: #fff;
+  font-size: 0.66rem;
+  font-weight: 700;
+}
+
+.sidetabs-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+/* the embedded panels drop their own chrome and title */
+.sidetabs .glass-panel {
+  flex: 1;
+  background: none;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.sidetabs .glass-panel::before,
+.sidetabs .panel-title {
+  display: none;
+}

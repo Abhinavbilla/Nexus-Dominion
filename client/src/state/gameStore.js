@@ -30,6 +30,7 @@ export const useGameStore = create((set, get) => ({
   actionMode: null, // "claim" | "build" | "attack" | "fortify" | null
   pendingBuildType: null,
   muted: false,
+  helpOpen: false,
 
   setSocketConnected: (connected) => set({ socketConnected: connected }),
   setError: (error) => set({ error }),
@@ -59,6 +60,7 @@ export const useGameStore = create((set, get) => ({
   setPendingBuildType: (buildingType) => set({ pendingBuildType: buildingType }),
   clearSelection: () => set({ selectedHex: null, actionMode: null, pendingBuildType: null }),
 
+  setHelpOpen: (open) => set({ helpOpen: open }),
   toggleMuted: () => set({ muted: !get().muted }),
 
   resetToMenu: () =>

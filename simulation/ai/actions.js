@@ -72,6 +72,7 @@ export function cloneState(state) {
   copy.turnTimeRemaining = state.turnTimeRemaining;
   copy.activeSupplyChains = state.activeSupplyChains.map((c) => ({ ...c }));
   copy.completedChainRecords = state.completedChainRecords.map((r) => ({ ...r }));
+  copy.rules = state.rules;
   copy.thresholdReached = state.thresholdReached;
   copy.winnerId = state.winnerId;
   copy.winReason = state.winReason;

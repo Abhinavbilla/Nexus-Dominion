@@ -1,5 +1,5 @@
 import { useGameStore } from "../state/gameStore.js";
-import { getModeConfig } from "../config.js";
+import { rulesOf } from "./rules.js";
 import Icon from "./Icon.jsx";
 import { PlayerEmblem } from "./bits.jsx";
 import { PLAYER_COLOR_NAME } from "../game/playerColors.js";
@@ -9,7 +9,7 @@ export default function PlayerList() {
   const gameState = useGameStore((s) => s.gameState);
   const myId = useGameStore((s) => s.playerId);
   if (!gameState) return null;
-  const target = getModeConfig(gameState.mode).VICTORY_SCORE;
+  const target = rulesOf(gameState).victoryScore;
 
   const ranked = [...gameState.players].sort((a, b) => b.dominionPoints - a.dominionPoints);
   const leaderId = ranked[0]?.dominionPoints > 0 ? ranked[0].id : null;

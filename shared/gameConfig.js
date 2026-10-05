@@ -44,12 +44,16 @@ export function validateGameConfig(raw) {
   return deepFreeze(structuredClone(raw));
 }
 
-export function resolveModeConfig(config, mode = "normal") {
+// Mode settings, optionally specialised by player count so a 2-player and a 4-player
+// match both last a similar amount of real time (more players = more turns per round).
+export function resolveModeConfig(config, mode = "normal", playerCount = null) {
   const modeConfig = config.modes[mode];
   if (!modeConfig) {
     throw new Error(`gameConfig: unknown mode "${mode}"`);
   }
-  return { ...config, ...modeConfig, mode };
+  const { BY_PLAYER_COUNT, ...base } = modeConfig;
+  const scaled = (BY_PLAYER_COUNT && playerCount && BY_PLAYER_COUNT[playerCount]) || {};
+  return { ...config, ...base, ...scaled, mode };
 }
 
 function deepFreeze(obj) {

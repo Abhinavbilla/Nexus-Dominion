@@ -21,6 +21,7 @@ export class GameState {
     this.board = cells; // Map<"q,r", HexCell>
     this.activeSupplyChains = []; // [{ playerId, sourceKey, cityKey, resourceType, pathKeys, active }]
     this.completedChainRecords = []; // [{ playerId, sourceKey, dominionAwarded }]
+    this.rules = null; // { victoryScore, maxRounds, turnSeconds, actionPoints, chainPerRound } shown to clients
     this.thresholdReached = false; // VICTORY_AT_ROUND_END: someone hit the score; decided when the round ends
     this.winnerId = null;
     this.winReason = null;
@@ -67,6 +68,7 @@ export class GameState {
       })),
       activeSupplyChains: this.activeSupplyChains,
       completedChainRecords: this.completedChainRecords,
+      rules: this.rules,
       thresholdReached: this.thresholdReached,
       winnerId: this.winnerId,
       winReason: this.winReason,

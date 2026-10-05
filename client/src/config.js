@@ -6,6 +6,6 @@ import { validateGameConfig, resolveModeConfig } from "@hex-dominion/shared/game
 // the sole source of truth and re-validates every action independently.
 export const BASE_CONFIG = validateGameConfig(rawConfig);
 
-export function getModeConfig(mode = "normal") {
-  return resolveModeConfig(BASE_CONFIG, mode);
+export function getModeConfig(mode = "normal", playerCount = null) {
+  return resolveModeConfig(BASE_CONFIG, mode, playerCount);
 }

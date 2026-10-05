@@ -144,7 +144,7 @@ Turn-based multiplayer.
 ## Match duration
 
 Normal mode:
-- Maximum 18 rounds.
+- Maximum rounds scale with player count (55 / 40 / 30 for 2 / 3 / 4 players).
 - 25-second turn timer.
 - 2 Action Points per player turn.
 
@@ -1167,9 +1167,9 @@ The winner is the player with the highest Dominion Points at that moment
 (ties use the tie-breakers in §39). The HUD shows a "FINAL ROUND" indicator once
 the threshold has been reached.
 
-Default threshold:
+Default threshold (scaled by player count so every match lasts roughly 30–40 minutes):
 
-40 Dominion Points.
+200 Dominion Points with 2 players, 120 with 3, 90 with 4.
 
 Rationale: if the match ended the instant a threshold was reached, whoever moved
 first in the deciding round would have a systematic advantage. Simulation
@@ -1183,7 +1183,7 @@ restores immediate victory.
 
 If no player reaches the threshold:
 
-The game ends after Round 18.
+The game ends after the configured round limit (default 55 rounds with 2 players, 40 with 3, 30 with 4).
 
 The player with the highest Dominion Points wins.
 
@@ -1572,9 +1572,9 @@ The project must contain a configurable Demo Mode.
 
 Normal:
 
-MAX_ROUNDS = 18
+MAX_ROUNDS = 30 (55 / 40 / 30 by player count)
 TURN_DURATION = 30 seconds
-VICTORY_SCORE = 40
+VICTORY_SCORE = 90 (200 / 120 / 90 by player count)
 
 Demo:
 

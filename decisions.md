@@ -328,3 +328,11 @@ Victory Score (2p: 59/41; 4p: 28/33/17/21), plus a seat-isolation skew with 3 pl
 - **AI tie-breaking** is random among equal scores (seeded in simulations) so board order
   cannot bias results.
 After these changes all seat win-rate distributions pass a chi-square test (p>0.05).
+
+## Long-match amendment (2026-10-05)
+Target match length is now 30-40 minutes. `modes.normal.BY_PLAYER_COUNT` sets the victory score
+and round limit per player count (2p: 200 pts / 55 rounds, 3p: 120 / 40, 4p: 90 / 30), resolved
+by `resolveModeConfig(config, mode, playerCount)` and sent to clients as `gameState.rules`.
+Each active Supply Chain now also pays +1 Dominion at the start of every round
+(`DOMINION_REWARDS.SUPPLY_CHAIN_PER_ROUND`), so long games keep progressing and protecting or
+cutting a chain matters all game. Turn timer is 30 seconds.

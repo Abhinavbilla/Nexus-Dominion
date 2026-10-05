@@ -2,7 +2,8 @@ import { generateBoard } from "@hex-dominion/shared/boardGenerator.js";
 import { BUILDING } from "@hex-dominion/shared/constants.js";
 import { GameState } from "./GameState.js";
 import { startTurn, advanceTurn } from "./TurnManager.js";
-import { generateRoundResources } from "./ResourceManager.js";
+import { generateRoundResources, awardChainDominion } from "./ResourceManager.js";
+import { checkVictory } from "./ActionProcessor.js";
 
 function createEmptyStats() {
   return {
@@ -49,7 +50,15 @@ export function createMatch({ matchId, mode, playersInput, initialSeed, config }
     };
   });
 
-  return new GameState({ matchId, initialSeed, boardSeed, mode, cells, players });
+  const state = new GameState({ matchId, initialSeed, boardSeed, mode, cells, players });
+  state.rules = {
+    victoryScore: config.VICTORY_SCORE,
+    maxRounds: config.MAX_ROUNDS,
+    turnSeconds: config.TURN_DURATION_SECONDS,
+    actionPoints: config.ACTION_POINTS_PER_TURN,
+    chainPerRound: config.DOMINION_REWARDS.SUPPLY_CHAIN_PER_ROUND || 0,
+  };
+  return state;
 }
 
 export function startMatch(state, config) {
@@ -129,6 +138,8 @@ export function endTurn(state, config, reason = "manual") {
   }
 
   generateRoundResources(state, config);
+  awardChainDominion(state, config);
+  checkVictory(state, config);
   startTurn(state, config);
   state.pushEvent({ type: "round_started", round: state.currentRound });
   return { roundEnded: true, matchFinished: false };

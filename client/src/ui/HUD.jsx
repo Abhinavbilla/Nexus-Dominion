@@ -1,5 +1,5 @@
 import { useGameStore, getMyPlayer, isMyTurn } from "../state/gameStore.js";
-import { getModeConfig } from "../config.js";
+import { rulesOf } from "./rules.js";
 import Icon from "./Icon.jsx";
 import { PlayerEmblem, ResourceChip } from "./bits.jsx";
 import "./HUD.css";
@@ -43,9 +43,9 @@ export default function HUD() {
 
   if (!gameState || !me) return null;
 
-  const mode = getModeConfig(gameState.mode);
-  const roundPct = Math.min(100, (gameState.currentRound / mode.MAX_ROUNDS) * 100);
-  const dpPct = Math.min(100, (me.dominionPoints / mode.VICTORY_SCORE) * 100);
+  const rules = rulesOf(gameState);
+  const roundPct = Math.min(100, (gameState.currentRound / rules.maxRounds) * 100);
+  const dpPct = Math.min(100, (me.dominionPoints / rules.victoryScore) * 100);
 
   return (
     <div className="hud glass-panel">
@@ -61,7 +61,7 @@ export default function HUD() {
         <span className="hud-label">ROUND</span>
         <span className="hud-big mono">
           {gameState.currentRound}
-          <span className="hud-dim">/{mode.MAX_ROUNDS}</span>
+          <span className="hud-dim">/{rules.maxRounds}</span>
         </span>
         <div className="hud-meter">
           <div className="hud-meter-fill" style={{ width: `${roundPct}%` }} />
@@ -74,7 +74,7 @@ export default function HUD() {
           <span className="hud-label">{myTurn ? "YOUR TURN" : "TURN"}</span>
           <span className={`hud-turn-name player-${current?.color}`}>{current?.name}</span>
         </div>
-        <TimerRing seconds={turnTimeRemaining} total={mode.TURN_DURATION_SECONDS} />
+        <TimerRing seconds={turnTimeRemaining} total={rules.turnSeconds} />
       </div>
 
       {gameState.thresholdReached && (
@@ -92,13 +92,13 @@ export default function HUD() {
         <ResourceChip kind="energy" value={me.resources.energy} />
       </div>
 
-      <div className="hud-block hud-dominion" title={`Dominion Points — first to ${mode.VICTORY_SCORE} wins`}>
+      <div className="hud-block hud-dominion" title={`Dominion Points — first to ${rules.victoryScore} triggers the final round`}>
         <span className="hud-label">
           <Icon name="dominion" size={13} color="var(--gold)" /> DOMINION
         </span>
         <span className="hud-big mono" style={{ color: "var(--gold-bright)" }}>
           {me.dominionPoints}
-          <span className="hud-dim">/{mode.VICTORY_SCORE}</span>
+          <span className="hud-dim">/{rules.victoryScore}</span>
         </span>
         <div className="hud-meter hud-meter-gold">
           <div className="hud-meter-fill" style={{ width: `${dpPct}%` }} />

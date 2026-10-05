@@ -80,7 +80,7 @@ export class RoomManager {
     if (room.hostPlayerId !== requestingPlayerId) return { error: "Only the host can start the game" };
     if (room.lobbyPlayers.length < 2) return { error: "Need at least 2 players" };
 
-    const config = resolveModeConfig(this.baseConfig, mode || "normal");
+    const config = resolveModeConfig(this.baseConfig, mode || "normal", room.lobbyPlayers.length);
     const matchId = randomUUID();
     const initialSeed = Date.now() >>> 0;
     const state = createMatch({ matchId, mode: config.mode, playersInput: room.lobbyPlayers, initialSeed, config });
