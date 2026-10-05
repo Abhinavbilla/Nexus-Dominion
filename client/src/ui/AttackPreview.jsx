@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { useGameStore, getMyPlayer } from "../state/gameStore.js";
 import { calculateAttackStrength, calculateDefenseStrength, resolveAttack } from "@hex-dominion/shared/combat.js";
 import { boardArrayToMap } from "../boardMap.js";
@@ -11,6 +12,12 @@ export default function AttackPreview() {
   const gameState = useGameStore((s) => s.gameState);
   const clearSelection = useGameStore((s) => s.clearSelection);
   const me = getMyPlayer();
+  const rootRef = useRef(null);
+
+  // The left panel scrolls on short screens; keep Confirm/Cancel reachable.
+  useEffect(() => {
+    rootRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }, [selectedHex, actionMode]);
 
   if (actionMode !== "attack" || !selectedHex || !gameState) return null;
 
@@ -37,7 +44,7 @@ export default function AttackPreview() {
   }
 
   return (
-    <div className="attack-preview glass-panel fade-in-up">
+    <div ref={rootRef} className="attack-preview glass-panel fade-in-up">
       <h3 className="font-display attack-preview-title">ATTACK PREVIEW</h3>
       <p className="text-dim">
         Target: <span className={`player-${defender?.color}`}>{defender?.name}</span>'s hex ({selectedHex.q}, {selectedHex.r})
