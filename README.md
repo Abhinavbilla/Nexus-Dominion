@@ -684,6 +684,8 @@ on AI matches to approximate human behaviour.
 
 ## Credits and licences
 
+The code in this repository is released under the MIT licence (see [`LICENSE`](LICENSE)). Third-party assets keep their own licences:
+
 - Gameplay icons: [game-icons.net](https://game-icons.net) by Lorc, Delapouite and contributors, licensed
   **CC BY 3.0**.
 - Interface icons: [Phosphor Icons](https://phosphoricons.com), MIT.
