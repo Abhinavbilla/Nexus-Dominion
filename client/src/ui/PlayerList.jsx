@@ -43,13 +43,13 @@ export default function PlayerList() {
                   <Icon name="dominion" size={12} color="var(--gold)" /> {p.dominionPoints}
                 </span>
                 <span>
-                  <Icon name="wood" size={12} color="var(--res-wood)" /> {p.resources.wood}
+                  <Icon name="wood" size={18} /> {p.resources.wood}
                 </span>
                 <span>
-                  <Icon name="metal" size={12} color="var(--res-metal)" /> {p.resources.metal}
+                  <Icon name="metal" size={18} /> {p.resources.metal}
                 </span>
                 <span>
-                  <Icon name="energy" size={12} color="var(--res-energy)" /> {p.resources.energy}
+                  <Icon name="energy" size={18} /> {p.resources.energy}
                 </span>
               </div>
             </div>

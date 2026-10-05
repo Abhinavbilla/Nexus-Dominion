@@ -10,7 +10,7 @@ export const RESOURCE_META = {
 };
 
 // "3 wood · 2 metal" as icon chips. `have` (optional player resources) marks unaffordable costs.
-export function CostChips({ cost, have, size = 14 }) {
+export function CostChips({ cost, have, size = 20 }) {
   const entries = ["wood", "metal", "energy"].filter((k) => cost?.[k]);
   return (
     <span className="cost-chips">
@@ -42,7 +42,7 @@ export function ResourceChip({ kind, value }) {
   }, [value]);
   return (
     <div className="res-chip" title={meta.label}>
-      <Icon name={meta.icon} size={20} color={meta.color} />
+      <Icon name={meta.icon} size={30} color={meta.color} />
       <span className="res-chip-value mono">{value}</span>
       {delta && (
         <span key={delta.id} className={`res-chip-delta mono ${delta.amount > 0 ? "up" : "down"}`}>

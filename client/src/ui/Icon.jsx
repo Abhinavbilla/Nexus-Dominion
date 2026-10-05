@@ -1,4 +1,5 @@
 import { ICONS } from "./iconData.js";
+import { resourceIconUrl, isResourceIcon } from "../game/art/resourceArt.js";
 
 // Every symbol in the game comes from professionally drawn open icon sets (game-icons.net for
 // gameplay symbols, Phosphor duotone for interface chrome — see scripts/gen-icons.mjs). The same
@@ -23,6 +24,9 @@ export function iconDataUrl(name, color = "#ffffff", size = 96) {
 export const ICON_NAMES = Object.keys(ICONS);
 
 export default function Icon({ name, size = 18, color, className = "", title }) {
+  if (isResourceIcon(name)) {
+    return <img className={`icon icon-res ${className}`} src={resourceIconUrl(name)} width={size} height={size} alt={title || ""} draggable="false" style={{ flexShrink: 0 }} />;
+  }
   const { body, w, h } = entry(name);
   return (
     <svg

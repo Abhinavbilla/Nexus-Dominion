@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { iconDataUrl } from "../ui/Icon.jsx";
+import { resourceIconUrl, isResourceIcon } from "./art/resourceArt.js";
 
 const ICONS = ["claim", "build", "attack", "fortify", "wood", "metal", "energy", "dominion", "chain"];
 
@@ -52,7 +53,7 @@ export class EffectsManager {
         if (!this.scene.textures.exists(key)) this.scene.textures.addImage(key, img);
         this.scene.events.emit("icon-ready", key);
       };
-      img.src = iconDataUrl(name, "#ffffff", 96);
+      img.src = isResourceIcon(name) ? resourceIconUrl(name) : iconDataUrl(name, "#ffffff", 96);
     }
   }
 
@@ -174,9 +175,11 @@ export class EffectsManager {
   floatIcon(x, y, iconName, text, color, { delay = 0, rise = 34 } = {}) {
     if (!this.hasIcon(iconName)) return;
     const css = typeof color === "number" ? `#${color.toString(16).padStart(6, "0")}` : color;
-    const icon = this.scene.add.image(x - 8, y, `ico-${iconName}`).setDisplaySize(15, 15).setTint(typeof color === "number" ? color : 0xffffff);
+    const painted = isResourceIcon(iconName);
+    const icon = this.scene.add.image(x - 9, y, `ico-${iconName}`).setDisplaySize(painted ? 22 : 15, painted ? 22 : 15);
+    if (!painted && typeof color === "number") icon.setTint(color);
     const label = this.scene.add
-      .text(x + 3, y, text, { fontFamily: '"JetBrains Mono", monospace', fontStyle: "700", fontSize: "12px", color: css, stroke: "#05070d", strokeThickness: 3 })
+      .text(x + 4, y, text, { fontFamily: '"JetBrains Mono", monospace', fontStyle: "700", fontSize: "12px", color: css, stroke: "#05070d", strokeThickness: 3 })
       .setOrigin(0, 0.5);
     [icon, label].forEach((o) => o.setDepth(9500).setAlpha(0));
     this.scene.tweens.add({

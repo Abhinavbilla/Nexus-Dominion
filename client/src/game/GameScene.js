@@ -19,7 +19,7 @@ const MODE_STYLE = {
   fortify: { color: 0x5aa9ff, icon: "fortify" },
 };
 const RESOURCE_BY_TERRAIN = { forest: "wood", mine: "metal", energy_field: "energy" };
-const RESOURCE_COLOR = { wood: 0x7fc66a, metal: 0x9fb4cf, energy: 0xffd84d };
+const RESOURCE_COLOR = { wood: 0xd79a5a, metal: 0x9fb4cf, energy: 0xffd84d };
 
 export default class GameScene extends Phaser.Scene {
   constructor() {
