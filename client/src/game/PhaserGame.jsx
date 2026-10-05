@@ -25,6 +25,7 @@ export default function PhaserGame({ onHexClick, highlightKeys = [] }) {
       width: el.clientWidth,
       height: el.clientHeight,
       backgroundColor: "#060a14",
+      audio: { noAudio: true }, // sound effects use Web Audio directly (audio/AudioManager.js)
       scene: GameScene,
     });
 
@@ -38,6 +39,7 @@ export default function PhaserGame({ onHexClick, highlightKeys = [] }) {
 
     const handleResize = () => {
       if (!containerRef.current) return;
+      if (containerRef.current.clientWidth < 2 || containerRef.current.clientHeight < 2) return;
       game.scale.resize(containerRef.current.clientWidth, containerRef.current.clientHeight);
     };
     window.addEventListener("resize", handleResize);

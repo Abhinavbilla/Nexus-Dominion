@@ -39,6 +39,8 @@ export function initSocketClient() {
     useGameStore.getState().setSocketConnected(true);
     const session = loadSession();
     if (session?.roomCode && session?.playerId && session?.reconnectToken) {
+      // Restore identity locally first so isMyTurn()/getMyPlayer() work as soon as state_sync arrives.
+      useGameStore.getState().setSession(session);
       socket.emit("reconnect_player", session);
     }
   });
@@ -48,6 +50,11 @@ export function initSocketClient() {
   });
 
   socket.on("error", ({ code, message }) => {
+    if (code === "RECONNECT_FAILED") {
+      // Room is gone (e.g. server restarted): drop the stale session and go back to the menu.
+      clearSession();
+      useGameStore.getState().resetToMenu();
+    }
     useGameStore.getState().setError(message || code);
   });
 

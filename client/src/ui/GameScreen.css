@@ -53,8 +53,30 @@
 }
 
 @media (max-width: 900px) {
+  /* Narrow screens: stack everything in one scrolling column with a fixed-height board. */
+  .game-root {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+
   .game-middle {
     grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: none;
+    flex: none;
+  }
+
+  .game-board-wrap {
+    order: -1;
+    height: 60vh;
+    min-height: 320px;
+  }
+
+  .game-left-panel {
+    overflow: visible;
+  }
+
+  .game-bottom-bar {
+    height: 180px;
   }
 }
