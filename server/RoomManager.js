@@ -52,10 +52,14 @@ export class RoomManager {
     if (!AI_TYPES.includes(aiType)) return { error: "Unknown AI type" };
     if (room.lobbyPlayers.length >= this.baseConfig.STARTING_POSITIONS.length) return { error: "Room is full" };
 
-    const aiCount = room.lobbyPlayers.filter((p) => p.isAI).length + 1;
+    // Short, readable names: "Greedy AI", then "Greedy AI 2" if there is more than one of a type.
+    const label = aiType[0].toUpperCase() + aiType.slice(1);
+    const taken = new Set(room.lobbyPlayers.map((p) => p.name));
+    let name = `${label} AI`;
+    for (let n = 2; taken.has(name); n++) name = `${label} AI ${n}`;
     room.lobbyPlayers.push({
       id: randomUUID(),
-      name: `NEXUS-AI ${aiCount} (${aiType})`,
+      name,
       socketId: null,
       reconnectToken: null,
       connected: true,

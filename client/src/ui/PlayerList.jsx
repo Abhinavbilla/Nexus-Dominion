@@ -46,11 +46,6 @@ export default function PlayerList() {
                 </span>
                 {p.id === leaderId && <span className="pcard-lead">LEADING</span>}
                 {p.id === gameState.hostId && <span className="pcard-host">HOST</span>}
-                {iAmHost && p.id !== myId && !p.left && (
-                  <button className={`pcard-remove ${confirmId === p.id ? "pcard-remove-armed" : ""}`} onClick={() => removeClick(p.id)} title="Remove this player from the match">
-                    {confirmId === p.id ? "Confirm?" : "Remove"}
-                  </button>
-                )}
               </div>
               <div className="pcard-sub">
                 {PLAYER_COLOR_NAME[p.color]}
@@ -72,6 +67,11 @@ export default function PlayerList() {
                 <span>
                   <Icon name="energy" size={18} /> {p.resources.energy}
                 </span>
+                {iAmHost && p.id !== myId && !p.left && (
+                  <button className={`pcard-remove ${confirmId === p.id ? "pcard-remove-armed" : ""}`} onClick={() => removeClick(p.id)} title="Remove this player from the match">
+                    {confirmId === p.id ? "Confirm?" : "Remove"}
+                  </button>
+                )}
               </div>
             </div>
             {isCurrent && <span className="pcard-turn" />}

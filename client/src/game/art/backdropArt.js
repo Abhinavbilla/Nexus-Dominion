@@ -1,4 +1,4 @@
-import { makeCanvas, mulberry32, rand, pointInCircle, radialGradient, linearGradient, rgba, polygon } from "./artUtils.js";
+import { makeCanvas, mulberry32, rand, pointInCircle, radialGradient, linearGradient, rgba, polygon, mix } from "./artUtils.js";
 
 // Procedural "painted" space backdrop: deep gradient, drifting nebula clouds, stars with
 // diffraction glints, a faint hex lattice and a vignette. Used behind the menu screens
@@ -74,47 +74,104 @@ export function renderBackdrop(w, h, seed = 7, { lattice = true } = {}) {
   return canvas;
 }
 
-// The brass-rimmed plinth the board sits on (flat-top hexagon, extruded).
+// The board's base: a stepped, terraced plinth. Three descending ledges (each with its own lit top,
+// shaded wall and brass inlay) lead up to a brass-trimmed top tier, so the edge reads as solid
+// architecture instead of a single line. Flat-top hexagon, extruded.
 export function renderPlinth(hexSize, boardRadius) {
   const scale = 2;
   const K = Math.sqrt(3) / 2; // regular flat-top hexagon: height = R * sqrt(3)
-  const R = (hexSize * Math.sqrt(3) * boardRadius + hexSize * 1.25) * scale;
-  const D = hexSize * 0.7 * scale;
+  const R = (hexSize * Math.sqrt(3) * boardRadius + hexSize * 1.25) * scale; // top tier radius
+  const STEPS = [1.25, 1.17, 1.09]; // ledge radii (outer -> inner) as multiples of R
+  const levels = STEPS.length;
+  const H = hexSize * 0.26 * scale; // height of one step
+  const D = hexSize * 0.5 * scale; // base wall under the whole structure
   const pad = hexSize * 2.2 * scale;
-  const W = Math.ceil(R * 2 + pad * 2);
-  const H = Math.ceil(R * 2 * K + D + pad * 2);
-  const canvas = makeCanvas(W, H);
+  const Rmax = R * STEPS[0];
+  const W = Math.ceil(Rmax * 2 + pad * 2);
+  const Ht = Math.ceil(Rmax * 2 * K + D + (levels + 1) * H + pad * 2);
+  const canvas = makeCanvas(W, Ht);
   const ctx = canvas.getContext("2d");
   const cx = W / 2;
-  const cy = pad + R * K;
+  const cy = pad + Rmax * K; // centre of the TOP tier surface (where the tiles sit)
 
   const hex = (x, y, r) => {
     const pts = [];
     for (let i = 0; i < 6; i++) {
       const a = (Math.PI / 180) * (60 * i);
-      pts.push([x + r * Math.cos(a), y + r * K * Math.sin(a) / Math.sin(Math.PI / 3)]);
+      pts.push([x + r * Math.cos(a), y + r * Math.sin(a)]);
     }
     polygon(ctx, pts);
   };
+  const lerp = (a, b, t) => a + (b - a) * t;
 
+  // light from the upper left: edges facing it get a highlight, the others a shadow
+  const bevel = (x, y, r, strength = 1) => {
+    const light = (-135 * Math.PI) / 180;
+    for (let i = 0; i < 6; i++) {
+      const a0 = (Math.PI / 180) * (60 * i);
+      const a1 = (Math.PI / 180) * (60 * (i + 1));
+      const facing = Math.cos((Math.PI / 180) * (60 * i + 30) - light);
+      ctx.beginPath();
+      ctx.moveTo(x + (r - 1) * Math.cos(a0), y + (r - 1) * Math.sin(a0));
+      ctx.lineTo(x + (r - 1) * Math.cos(a1), y + (r - 1) * Math.sin(a1));
+      ctx.lineWidth = hexSize * 0.05 * scale;
+      ctx.lineCap = "round";
+      ctx.strokeStyle = facing > 0 ? `rgba(255,255,255,${0.32 * facing * strength})` : `rgba(0,0,0,${0.5 * -facing * strength})`;
+      ctx.stroke();
+    }
+  };
+
+  const wall = (y, r, depth, top, bottom) => {
+    for (let k = Math.ceil(depth); k >= 0; k--) {
+      hex(cx, y + k, r);
+      ctx.fillStyle = mix(top, bottom, k / depth);
+      ctx.fill();
+    }
+  };
+
+  const top = (y, r, c0, c1) => {
+    hex(cx, y, r);
+    ctx.fillStyle = linearGradient(ctx, cx - r, y - r, cx + r, y + r, [[0, c0], [1, c1]]);
+    ctx.fill();
+  };
+
+  // ---- ground shadow + base wall under the whole structure
+  const yOuter = cy + levels * H;
   ctx.save();
   ctx.shadowColor = "rgba(0,0,0,0.7)";
   ctx.shadowBlur = hexSize * 1.4 * scale;
   ctx.shadowOffsetY = D * 0.9;
-  hex(cx, cy + D, R);
-  ctx.fillStyle = "#0a0d16";
+  hex(cx, yOuter + H + D, Rmax);
+  ctx.fillStyle = "#080a12";
   ctx.fill();
   ctx.restore();
 
-  for (let k = Math.ceil(D); k >= 0; k--) {
-    hex(cx, cy + k, R);
-    ctx.fillStyle = k > D * 0.2 ? "#1a1f31" : "#2a3350";
-    ctx.fill();
-  }
+  // ---- ledges, outermost (lowest) first; each one overlaps the one below it
+  const LEDGE = [
+    { top: ["#3b466c", "#262e4c"], wall: ["#59679f", "#0d1124"] },
+    { top: ["#48558a", "#2e385e"], wall: ["#6877b4", "#131830"] },
+    { top: ["#5868a0", "#38436c"], wall: ["#7686c2", "#181e3a"] },
+  ];
+  STEPS.forEach((mult, t) => {
+    const r = R * mult;
+    const y = cy + (levels - t) * H;
+    wall(y, r, t === 0 ? H + D : H, LEDGE[t].wall[0], LEDGE[t].wall[1]);
+    top(y, r, LEDGE[t].top[0], LEDGE[t].top[1]);
+    bevel(cx, y, r, 1.5);
+    // brass inlay running around the middle of the visible ledge band
+    const inner = t + 1 < levels ? R * STEPS[t + 1] : R;
+    const mid = (r + inner) / 2;
+    if (t !== 1) {
+      hex(cx, y, mid);
+      ctx.strokeStyle = t === 0 ? "rgba(233,180,76,0.6)" : "rgba(255,214,120,0.8)";
+      ctx.lineWidth = 2.4 * scale;
+      ctx.stroke();
+    }
+  });
 
-  hex(cx, cy, R);
-  ctx.fillStyle = linearGradient(ctx, cx - R, cy - R, cx + R, cy + R, [[0, "#2a3453"], [1, "#10162a"]]);
-  ctx.fill();
+  // ---- top tier wall + surface
+  wall(cy, R, H, "#4a3a17", "#1a1408");
+  top(cy, R, "#2a3453", "#10162a");
 
   // brass rim
   hex(cx, cy, R * 0.995);
@@ -126,7 +183,7 @@ export function renderPlinth(hexSize, boardRadius) {
   ctx.lineWidth = 1.5 * scale;
   ctx.stroke();
 
-  // tick marks between rims
+  // tick marks between the rims
   for (let i = 0; i < 6; i++) {
     for (let t = 1; t < 12; t++) {
       const a0 = (Math.PI / 180) * (60 * i);
@@ -145,10 +202,47 @@ export function renderPlinth(hexSize, boardRadius) {
   hex(cx, cy, R * 0.95);
   ctx.clip();
   ctx.fillStyle = radialGradient(ctx, cx - R * 0.3, cy - R * 0.4, 0, R * 1.1, [[0, "rgba(120,150,255,0.14)"], [1, "rgba(0,0,0,0)"]]);
-  ctx.fillRect(0, 0, W, H);
+  ctx.fillRect(0, 0, W, Ht);
   ctx.restore();
 
-  return { canvas, scale, cx, cy, W, H };
+  // ---- brass corner studs on the ledges (like bolted corner blocks)
+  const stud = (x, y, r) => {
+    ctx.fillStyle = "rgba(0,0,0,0.45)";
+    ctx.beginPath();
+    ctx.arc(x + r * 0.12, y + r * 0.18, r * 1.05, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = radialGradient(ctx, x - r * 0.35, y - r * 0.4, r * 0.1, r * 1.1, [[0, "#fff0b8"], [0.5, "#d9a441"], [1, "#7a5110"]]);
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(60,36,4,0.7)";
+    ctx.lineWidth = 1.2 * scale;
+    ctx.stroke();
+    ctx.fillStyle = "rgba(60,36,4,0.55)";
+    ctx.beginPath();
+    ctx.arc(x, y, r * 0.38, 0, Math.PI * 2);
+    ctx.fill();
+  };
+  [0, 2].forEach((t) => {
+    const y = cy + (levels - t) * H;
+    const r = R * lerp(STEPS[t], t + 1 < levels ? STEPS[t + 1] : 1, 0.5);
+    for (let i = 0; i < 6; i++) {
+      const a = (Math.PI / 180) * (60 * i);
+      stud(cx + r * Math.cos(a), y + r * Math.sin(a), hexSize * (t === 0 ? 0.27 : 0.2) * scale);
+    }
+  });
+
+  return {
+    canvas,
+    scale,
+    cx,
+    cy,
+    W,
+    H: Ht,
+    // extents used to frame the whole structure, steps included, in the camera
+    fitW: (2 * Rmax) / scale + hexSize * 0.6,
+    fitH: (2 * Rmax * K + D + levels * H) / scale + hexSize * 0.6,
+  };
 }
 
 export function backdropDataUrl(w = 1600, h = 1000, seed = 7) {
