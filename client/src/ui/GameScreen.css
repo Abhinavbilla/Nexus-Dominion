@@ -1,6 +1,8 @@
 .game-root {
   width: 100vw;
   height: 100vh;
+  box-sizing: border-box;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
@@ -46,6 +48,8 @@
 .game-bottom-bar {
   flex-shrink: 0;
   height: 160px;
+  display: flex;
+  min-height: 0;
 }
 
 @media (max-width: 900px) {

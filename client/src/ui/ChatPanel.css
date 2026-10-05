@@ -58,3 +58,8 @@
   padding: 0.5em 0.7em;
   font-size: 0.85rem;
 }
+
+.chat-input-row .chat-input {
+  min-width: 0;
+  width: auto;
+}

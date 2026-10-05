@@ -16,7 +16,7 @@ const FEATURE_LABELS = {
   resourceCost: "Resource cost",
 };
 
-const fmt = (n) => (Math.round(n * 100) / 100).toString();
+const fmt = (n) => (Math.round(n * 1000) / 1000).toString();
 
 // "WHY THIS MOVE?" (spec.md §52). Renders the exact feature table the AI
 // computed server-side — nothing here is generated or inferred client-side.
